@@ -1,0 +1,68 @@
+/* src/components/GiftCard/ValidationPopup/css/validationPopup.css */
+
+.gift-card-page .validation-popup__container {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+  }
+  
+  .gift-card-page .validation-popup__header {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+  }
+  
+  .gift-card-page .validation-popup__data-bubble {
+	font-size: 0.8rem;
+	color: var(--color-blue);
+	text-align: center;
+	border: var(--color-blue) 1px solid;
+	border-radius: 200px;
+	margin-bottom: 10px;
+	padding: 6px 12px;
+	background-color: #f0f8ff;
+  }
+  
+  .gift-card-page .validation-popup__info {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	row-gap: 10px;
+	column-gap: 20px;
+  }
+  
+  .gift-card-page .validation-popup__info p {
+	margin: 5px 0;
+  }
+  
+  .gift-card-page .validation-popup__deduct {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+  }
+  
+  .gift-card-page .validation-popup__deduct input {
+	padding: 8px;
+	border: 1px solid #ccc;
+	border-radius: 8px;
+	font-size: 1rem;
+  }
+  
+  .gift-card-page .validation-popup__deduct-error {
+	color: var(--color-red);
+	font-size: 0.9rem;
+	display: flex;
+	align-items: center;
+	gap: 5px;
+  }
+  
+  @media (max-width: 768px) {
+	.gift-card-page .validation-popup__info {
+	  grid-template-columns: 1fr;
+	}
+  }
+  
+  .gift-card-page .validation-popup__validate-icon {
+	margin-right: 5px;
+  }
+  

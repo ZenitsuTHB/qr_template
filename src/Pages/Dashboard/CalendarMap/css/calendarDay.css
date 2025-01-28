@@ -1,0 +1,75 @@
+/* ./css/calendarDay.css */
+
+.calendar-page .calendar-day {
+	min-height: 100px;
+	padding: 5px;
+	box-sizing: border-box;
+	cursor: pointer;
+	position: relative;
+	transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  
+  .calendar-page .calendar-day.special-mode {
+	border: none;
+  }
+  
+  .calendar-page .calendar-day:hover {
+	transform: scale(1.05);
+  }
+  
+  .calendar-page .calendar-grid-body .calendar-day {
+	opacity: 1;
+	transition: opacity 0.3s ease;
+  }
+  
+  .calendar-page .calendar-grid-body .calendar-day.fade-out {
+	opacity: 0.5;
+  }
+  
+  .calendar-page .calendar-day-number {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+  }
+  
+  .calendar-page .calendar-day--disabled {
+	background-color: #e0e0e0;
+  }
+  
+  .calendar-page .calendar-day--past {
+	opacity: 0.5;
+  }
+  
+  .calendar-page .calendar-day--today {
+	background-color: var(--color-blue-transparant);
+
+	border: 2px solid var(--color-blue);
+  }
+  
+  .calendar-page .time-of-day-boxes {
+	margin-top: 25px; /* Increased margin between date number and boxes */
+  }
+  
+  .calendar-page .heatmap-total-guests,
+  .calendar-page .occupancy-percentage,
+  .calendar-page .prediction-total-guests {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 18px;
+	font-weight: bold;
+	opacity: 0;
+	transition: opacity 0.3s ease;
+  }
+  
+  .calendar-page .calendar-day:hover .heatmap-total-guests,
+  .calendar-page .calendar-day:hover .prediction-total-guests {
+	opacity: 1;
+  }
+  
+  .calendar-page .calendar-day .occupancy-percentage {
+	opacity: 1;
+	color: black;
+  }
+  

@@ -1,0 +1,146 @@
+/* table.css */
+
+.table-display-component .table-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80px;
+}
+
+.table-display-component .table {
+  background-color: rgba(245, 245, 220, 1); /* Light color with opacity */
+  border: 2px solid #d2b48c;
+  border-radius: 8px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  overflow: hidden;
+  padding: 5px;
+  box-sizing: border-box;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+.table-display-component .table-occupied {
+  background-color: rgba(76, 175, 80, 1); /* Green with opacity */
+  color: #ffffff; /* White text */
+  border-color: #388e3c; /* Darker green border */
+}
+
+.table-display-component .chairs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+.table-display-component .top-chairs {
+  top: 0;
+  transform: translate(-50%, 150%);
+}
+
+.table-display-component .bottom-chairs {
+  bottom: 0;
+  transform: translate(-50%, -150%);
+}
+
+.table-display-component .chair {
+  width: 20px !important;
+  height: 20px !important;
+  background-color: rgba(245, 245, 220, 0.8); /* Light color with opacity */
+  border: 2px solid #d2b48c;
+  border-radius: 50%;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.table-display-component .occupied .chair {
+  background-color: rgba(76, 175, 80, 0.8); /* Green with opacity */
+  border-color: #388e3c;
+}
+
+.table-display-component .reservation {
+  background-color: transparent; /* Remove background to show table's color */
+  border: none;
+  color: #ffffff; /* White text */
+  font-size: 12px;
+  padding: 0;
+  margin: 0;
+  cursor: grab;
+}
+
+.table-display-component .reservation:hover {
+  text-decoration: underline;
+}
+
+.table-display-component .reservation-name {
+  font-weight: bold;
+}
+
+/* Tooltip Styles */
+.table-display-component .tooltip {
+  display: none; /* Hidden by default */
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translate(-50%, -100%);
+  background-color: rgba(255, 255, 255, 0.95);
+  color: #333333;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+  width: 250px;
+  max-height: 300px;
+  overflow-y: auto;
+  transition: opacity 0.3s;
+}
+
+.table-display-component .table-container:hover .tooltip {
+  display: block;
+}
+
+.table-display-component .tooltip-content {
+  margin-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.table-display-component .tooltip-content:last-child {
+  margin-bottom: 0;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.table-display-component .reservation-summary {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.table-display-component .reservation-notes input {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
+
+.table-display-component .table-number {
+  position: absolute;
+  bottom: 5px;
+  right: 5px; /* Changed from left to right */
+  background-color: rgba(255, 255, 255, 0.7);
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-size: 12px;
+  color: #333;
+  pointer-events: none; /* Ensure the number doesn't interfere with dragging */
+  transition: transform 0.2s;
+}

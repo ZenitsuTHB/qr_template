@@ -1,0 +1,98 @@
+
+.form-editing-page .palette {
+	width: 300px;
+	padding: 20px;
+	margin-left: -20px;
+	box-sizing: border-box;
+	overflow-y: auto;
+	border-radius: 8px;
+	display: flex;
+	flex-direction: column;
+  }
+  
+  .form-editing-page .palette-blocks {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+  }
+  
+  .form-editing-page .palette-block {
+	background-color: var(--color-white);
+	padding: 10px;
+	border-radius: 8px;
+	cursor: grab;
+	display: flex;
+	align-items: center;
+	transition: opacity 0.2s ease, transform 0.2s ease;
+	box-sizing: border-box;
+  }
+  
+  .form-editing-page .palette-block:hover {
+	transform: scale(1.05);
+  }
+  
+  .form-editing-page .palette-block.dragging {
+	opacity: 0.5;
+	transform: scale(0.95);
+  }
+  
+  .form-editing-page .palette-drag-icon {
+	font-size: 16px;
+	margin-right: 10px;
+	color: #ccc;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+  }
+  
+  .form-editing-page .palette-block .icon {
+	font-size: 24px;
+	margin-right: 10px;
+	align-items: center;
+	justify-content: center;
+	display: flex;
+	padding-top: 5px;
+	padding-bottom: 5px;
+  }
+  
+  .form-editing-page .palette-block .label {
+	font-size: 14px;
+  }
+  
+
+
+.form-editing-page .palette-block {
+	position: relative;
+	background-color: var(--color-white);
+	padding: 10px;
+	border-radius: 8px;
+	cursor: grab;
+	display: flex;
+	align-items: center;
+	transition: opacity 0.2s ease, transform 0.2s ease;
+	box-sizing: border-box;
+  }
+  
+  .form-editing-page .palette-block:hover {
+	transform: scale(1.05);
+	z-index: 10000;
+  }
+  
+  .form-editing-page .palette-block:hover::before {
+	content: '';
+	position: absolute;
+	top: -10px;
+	left: -10px;
+	right: -10px;
+	bottom: -10px;
+	border: 2px solid var(--color-lightblue);
+	border-radius: 16px;
+	pointer-events: none;
+	box-shadow: 0 0 10px var(--color-lightblue);
+  }
+  
+  .form-editing-page .palette-block.dragging {
+	opacity: 0.5;
+	transform: scale(0.95);
+  }
+  

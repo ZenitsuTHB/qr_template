@@ -1,0 +1,178 @@
+/* avatarSelection.css */
+
+.avatar-page-container {
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  align-items: center;
+  transform: translateY(-5%);
+}
+
+.avatar-page .avatar-title-and-selection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.avatar-page .avatar-title {
+  margin-bottom: 30px;
+  transition: all 0.5s ease;
+}
+
+.avatar-page .avatar-subtitle {
+  margin-bottom: 0px;
+  font-weight: 500;
+  color: rgb(101, 101, 101);
+}
+
+.avatar-page .avatar-selection-container {
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.avatar-page .avatar-button {
+  opacity: 0.5;
+  transition: opacity 0.5s ease, transform 1s ease, top 1s ease, left 1s ease;
+  background: none;
+  border: none;
+  width: 100px;
+  height: 100px;
+  cursor: pointer;
+  padding: 0;
+  position: relative;
+}
+
+.avatar-page .avatar-button.selected {
+  opacity: 1;
+}
+
+.avatar-page .avatar-button.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.avatar-page .avatar-button:hover:not(.selected) {
+  transform: scale(1.1);
+  opacity: 1;
+}
+
+.avatar-page .avatar-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.avatar-page .avatar-image.miraculous {
+  animation: shine 1s forwards;
+}
+
+.avatar-page .button-group {
+  display: flex;
+  gap: 10px;
+}
+
+.avatar-page .next-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: var(--color-blue);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+  opacity: 0;
+  transform: translateY(-50%);
+}
+
+.avatar-page .next-button.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.avatar-page .next-button:hover {
+  background-color: #0056b3;
+}
+
+.avatar-page .next-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.avatar-page .previous-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #6c757d;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+  opacity: 0;
+  transform: translateY(-50%);
+}
+
+.avatar-page .previous-button.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.avatar-page .previous-button:hover {
+  background-color: #5a6268;
+}
+
+.avatar-page .previous-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.avatar-page .avatar-button {
+  opacity: 0.5;
+  transition: opacity 0.5s ease, transform 1s ease, top 1s ease, left 1s ease;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.avatar-page .avatar-button:hover:not(.selected) {
+  transform: scale(1.1);
+  opacity: 1;
+}
+
+.avatar-page .avatar-button.selected {
+  opacity: 1;
+}
+
+.avatar-page .avatar-button.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.avatar-page .avatar-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.avatar-page .account-input {
+  position: absolute;
+  top: calc(50% + 120px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 40px;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  transition: all 1s ease, opacity 1s ease;
+  opacity: 0;
+}
+
+.avatar-page .account-input.visible {
+  opacity: 1;
+}

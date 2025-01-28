@@ -1,0 +1,35 @@
+
+@keyframes fadeIn {
+	from {
+	  opacity: 0;
+	  transform: translate(-50%, -60%);
+	}
+	to {
+	  opacity: 1;
+	  transform: translate(-50%, -50%);
+	}
+  }
+	
+  @keyframes rainbowAnimation {
+	  0% {
+	  background-position: 0% 50%;
+	  }
+	  50% {
+	  background-position: 100% 50%;
+	  }
+	  100% {
+	  background-position: 0% 50%;
+	  }
+  }
+
+  @keyframes shine {
+	0% {
+	  filter: brightness(1);
+	}
+	50% {
+	  filter: brightness(1.5);
+	}
+	100% {
+	  filter: brightness(1);
+	}
+  }

@@ -1,0 +1,20 @@
+.split-screen-component .Pane {
+	position: absolute;
+	height: 100vh;
+	overflow: auto;
+}
+  
+.split-screen-component .Resizer {
+	background: var(--color-black);
+	opacity: 0.2;
+	z-index: 1;
+	cursor: col-resize;
+	width: 5px;
+	margin: 0 -2px;
+	box-sizing: border-box;
+}
+  
+.split-screen-component .Resizer:hover {
+	opacity: 0.5;
+}
+  

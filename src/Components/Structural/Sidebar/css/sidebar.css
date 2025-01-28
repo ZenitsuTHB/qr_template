@@ -1,0 +1,195 @@
+/* sidebar.css */
+
+.sidebar-component {
+	position: fixed;
+	top: 0px; /* Offset from the top */
+	left: 0;
+	bottom: 0; /* Full height down to bottom */
+	z-index: 1000;
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	background-color: #1e3a3f; /* Theme 11 background */
+	padding: 10px 4px;
+	width: 60px; /* Collapsed width */
+	transition: width 0.3s ease;
+	color: #e5f0f2; /* Theme 11 text */
+}
+
+.sidebar-component.expanded {
+	width: 200px;
+	overflow-y: auto;
+	border-right: 1px solid #3a5c6c; /* Theme 11 border */
+}
+
+/* Active background for selected item */
+.sidebar-item__active-bg {
+	position: absolute;
+	inset: 0;
+	border-radius: 10px;
+	background-color: #2a4a50; /* Theme 11 activeBg */
+}
+
+.sidebar-item__active .sidebar-item__icon {
+	color: var(--color-blue); /* Theme 11 accent */
+}
+
+/* Sidebar Toggle */
+.sidebar-toggle {
+	margin-top: auto;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+	padding: 10px;
+	color: #5fa5bf; /* Theme 11 accent */
+}
+
+.sidebar-toggle:hover {
+	color: #ffffff; /* Theme 11 hoverText */
+}
+
+/* Sidebar Item */
+.sidebar-component .sidebar-item {
+	position: relative;
+	height: 40px;
+	display: flex;
+	align-items: center;
+	padding: 10px 16px;
+	cursor: pointer;
+	font-weight: 500;
+	color: #e5f0f2; /* Theme 11 text */
+	transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* Remove from here */
+.sidebar-item__content {
+	display: flex;
+	align-items: center;
+	position: relative;
+	/* margin-top: 100px; remove this */
+  }
+  
+  /* Add here */
+  .sidebar-component {
+	padding-top: 50px;
+  }
+  
+
+/* Sidebar Item Icon */
+.sidebar-item__icon {
+	display: flex;
+	align-items: center;
+	color: var(--color-blue); /* Theme 11 accent */
+	transition: color 0.3s ease, transform 0.3s ease;
+	font-size: 1.2rem;
+}
+
+/* Sidebar Item Text */
+.sidebar-item__text {
+	margin-left: 12px; 
+	color: var(--color-blue); /* Theme 11 text */
+	font-weight: 500;
+}
+
+.sidebar-item__text:hover {
+	color: white;
+}
+
+/* Tooltip */
+.sidebar-component .tooltip {
+	position: absolute;
+	left: 100%;
+	top: 50%;
+	transform: translateY(-50%) translateX(18px);
+	background-color: #2a4a50; /* Theme 11 tooltipBg */
+	color: var(--color-blue); /* Theme 11 text */
+	padding: 4px 8px;
+	border-radius: 4px;
+	border: 1px solid #3a5c6c; /* Theme 11 tooltipBorder */
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	white-space: nowrap;
+	opacity: 0;
+	visibility: hidden;
+	backdrop-filter: blur(30px);
+	transition: opacity 0.3s ease, visibility 0.3s ease;
+	z-index: var(--z-index-foreground);
+}
+
+.sidebar-item__icon:hover + .tooltip,
+.sidebar-item__content:hover .tooltip {
+	opacity: 1;
+	visibility: visible;
+}
+
+/* Hide tooltip when sidebar is expanded */
+.sidebar-component.expanded .tooltip {
+	display: none;
+}
+
+/* Secondary Items */
+.sidebar-item__secondary {
+	margin-top: 5px;
+	margin-left: 20px;
+	font-size: 0.9em;
+	display: flex;
+	flex-direction: column;
+}
+
+.sidebar-item__secondary-item {
+	padding: 5px 0 5px 20px;
+	cursor: pointer;
+	color: var(--color-blue); /* Theme 11 text */
+	transition: color 0.3s ease;
+}
+
+.sidebar-item__secondary-item:hover {
+	color: var(--color-blue); /* Theme 11 accent */
+}
+
+/* Sidebar Controls */
+.sidebar-controls {
+	margin-top: auto;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.sidebar-toggle-group {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.sidebar-toggle,
+.sidebar-pin {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+	color: var(--color-blue); /* Theme 11 accent */
+	padding: 10px;
+	transition: color 0.3s ease;
+}
+
+.sidebar-toggle:hover,
+.sidebar-pin:hover {
+	color: #ffffff; /* Theme 11 hoverText */
+}
+
+
+.sidebar-subsection-title {
+	margin-top: 15px;
+	margin-left: 16px;
+	font-size: 0.75rem; /* Small font size */
+	letter-spacing: 1px; /* Optional for a bit more spacing */
+	text-transform: uppercase; /* Capital letters */
+	color: var(--color-blue);
+	font-weight: 600; /* Slightly bold to stand out */
+  }
+  
+  /* Highlight active item text in white */
+.sidebar-item__active .sidebar-item__text {
+	color: #ffffff !important;
+  }
+  

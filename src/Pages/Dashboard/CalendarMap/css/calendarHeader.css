@@ -1,0 +1,166 @@
+/* ./css/calendarHeader.css */
+
+.calendar-page .calendar-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 10px;
+	width: 100%;
+	max-width: 800px;
+  }
+  
+  .calendar-page .calendar-header h2 {
+	margin: 0;
+	text-align: center;
+	flex-grow: 1;
+  }
+  
+  .calendar-page .calendar-header .nav-button {
+	background: none;
+	border: none;
+	cursor: pointer;
+	color: #000;
+  }
+  
+  .calendar-page .calendar-header .nav-button:hover {
+	color: var(--color-blue);
+  }
+  
+  .calendar-page .calendar-header .header-buttons {
+	display: flex;
+	align-items: center;
+  }
+  
+  .calendar-page .calendar-header .header-titles {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: auto;
+  }
+  
+  .calendar-page .toggle-button {
+	margin-right: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 38px;
+  }
+  
+  .calendar-page .nav-button {
+	background: none;
+	border: none;
+	cursor: pointer;
+	padding: 8px;
+	border-radius: 4px;
+	transition: background-color 0.3s ease;
+  }
+  
+  .calendar-page .nav-button:hover {
+	background-color: #e0e0e0;
+  }
+  
+  .calendar-page .header-title-container {
+	display: flex;
+	align-items: center;
+	position: relative;
+  }
+  
+  .calendar-page .header-title-container h2 {
+	margin: 0;
+	font-size: 1.5rem;
+  }
+  
+  .calendar-page .view-options-button {
+	background: none;
+	border: none;
+	cursor: pointer;
+	margin-left: 8px;
+	display: flex;
+	align-items: center;
+	padding: 4px;
+	border-radius: 4px;
+	opacity: 0.5;
+	transition: all 0.3s ease;
+  }
+  
+  .calendar-page .view-options-button:hover {
+	opacity: 1;
+  }
+  
+  .calendar-page .view-options-container {
+	position: absolute;
+	top: 40px;
+	right: 0px;
+	background-color: #ffffff;
+	border: 1px solid #ccc;
+	border-radius: 8px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	z-index: 1000;
+	width: 120px;
+	padding: 10px 0;
+  }
+  
+  .calendar-page .view-option {
+	padding: 10px 20px;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+  }
+  
+  .calendar-page .view-option:hover {
+	background-color: #f1f1f1;
+  }
+  
+  .calendar-page .view-option.selected {
+	background-color: #e0e0e0;
+  }
+  
+  .calendar-page .header-buttons {
+	display: flex;
+	align-items: center;
+  }
+  
+  /* Tooltip styles */
+  .calendar-page .button-with-tooltip {
+	position: relative;
+	display: inline-block;
+	margin-right: 10px;
+  }
+  
+  .calendar-page .button-with-tooltip .tooltip {
+	display: none;
+	position: absolute;
+	bottom: 125%;
+	left: 50%;
+	transform: translateX(-50%);
+	background-color: black;
+	color: white;
+	padding: 6px 8px;
+	border-radius: 4px;
+	white-space: nowrap;
+	font-size: 14px;
+	z-index: 1000;
+	opacity: 0;
+	transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+  }
+  
+  .calendar-page .button-with-tooltip .tooltip::before {
+	content: '';
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	transform: translateX(-50%);
+	border-width: 5px;
+	border-style: solid;
+	border-color: black transparent transparent transparent;
+  }
+  
+  .calendar-page .button-with-tooltip:hover .tooltip {
+	display: block;
+	opacity: 1;
+	transform: translateX(-50%) translateY(-5px);
+  }
+  
+  .calendar-page .header-buttons .button-with-tooltip {
+	margin-right: 10px;
+  }
+  

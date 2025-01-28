@@ -1,0 +1,77 @@
+.schedule-page-component .scheme-container {
+	max-width: 600px;
+	padding: 20px;
+	border-radius: 12px;
+	margin: 0 auto;
+	margin-bottom: 50px;
+	width: 100%;
+	background-color: #fff;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.schedule-page-component .scheme-container label {
+	display: block;
+	margin-bottom: 5px;
+	font-weight: 500;
+	color: #333;
+}
+
+.schedule-page-component .input-container {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+}
+
+.schedule-page-component .input-container input {
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	font-size: 1rem;
+	transition: border-color 0.3s ease;
+}
+
+.schedule-page-component .input-container input:focus {
+	border-color: #0056b3;
+	outline: none;
+}
+
+.schedule-page-component .time-inputs-container {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 16px;
+	margin-top: 20px;
+}
+
+.schedule-page-component .schedule-page-title {
+	margin-top: 40px;
+}
+
+.schedule-page-component .scheme-container {
+	max-width: 600px;
+	padding: 20px;
+	border-radius: 12px;
+	margin: 0 auto;
+	background-color: #fff;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.schedule-page-component .account-manage-title {
+	margin-top: 30px;
+	margin-bottom: 30px;
+}
+
+.schedule-page-component .time-inputs-container {
+	width: 100%;
+}
+
+.schedule-page-component .scheme-container label {
+	display: block;
+	margin-bottom: 5px;
+	font-weight: 500;
+	color: #333;
+}
+
+.schedule-page-component .input-container {
+	display: flex;
+	flex-direction: column;
+}

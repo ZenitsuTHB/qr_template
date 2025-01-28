@@ -1,0 +1,189 @@
+/* src/components/GiftCard/OverviewSection/css/overviewSection.css */
+
+.gift-card-page .overview-section {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.gift-card-page .bubble-style {
+    font-size: 0.8rem;
+    color: var(--color-blue);
+    text-align: center;
+    border: var(--color-blue) 1px solid;
+    border-radius: 200px;
+    margin-bottom: 10px;
+    padding: 6px 12px; /* Optional: more padding for better display */
+    background-color: #f0f8ff; /* Optional: light background color for contrast */
+}
+
+.gift-card-page .bold-customer-name {
+    font-weight: bold;
+}
+
+.gift-card-page .overview-section__controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.gift-card-page .overview-section__search {
+    flex: 1;
+    min-width: 200px;
+    width: 200px;
+    padding: 10px;
+    border: 1px solid var(--input-border);
+    border-radius: var(--border-radius);
+    font-size: var(--font-size);
+    transition: border-color 0.3s ease;
+}
+
+.gift-card-page .overview-section__search:focus {
+    border-color: var(--input-focus-border);
+    outline: none;
+}
+
+.gift-card-page .overview-section__table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.gift-card-page .overview-section__table {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: var(--box-shadow);
+    table-layout: fixed; /* Ensures fixed layout */
+}
+
+.gift-card-page .overview-section__table th,
+.gift-card-page .overview-section__table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    width: 12.5%; /* 100% / 8 columns */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.gift-card-page .overview-section__table th {
+    background-color: var(--table-header-bg);
+    cursor: pointer;
+    user-select: none;
+    font-weight: bold;
+    font-size: var(--font-size);
+    position: relative; /* For sort icons positioning */
+}
+
+.gift-card-page .overview-section__table th .sort-icon {
+    margin-left: 5px;
+    display: inline-block;
+}
+
+.gift-card-page .overview-section__table tr:hover {
+    background-color: var(--color-light-gray);
+}
+
+.gift-card-page .status {
+    padding: 4px 8px;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    display: inline-block;
+}
+
+.gift-card-page .status--used {
+    background-color: var(--color-red);
+}
+
+.gift-card-page .status--unused {
+    background-color: var(--color-green);
+}
+
+.gift-card-page .no-data {
+    text-align: center;
+    padding: 20px;
+    color: var(--color-gray);
+    font-size: var(--font-size);
+}
+
+.gift-card-page .overview-section__pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.gift-card-page .pagination__info {
+    font-size: var(--font-size);
+    color: var(--color-gray);
+}
+
+.gift-card-page .pagination__controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.gift-card-page .pagination__button {
+    background-color: var(--color-blue);
+    color: var(--color-white);
+    border: none;
+    border-radius: 5px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+.gift-card-page .pagination__button:disabled {
+    background-color: var(--color-blue);
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.gift-card-page .pagination__button:hover:not(:disabled) {
+    background-color: var(--button-hover-blue);
+}
+
+.gift-card-page .overview-section__export:hover {
+    background-color: var(--color-green);
+}
+
+.gift-card-page .overview-section .search-bars-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    margin-top: 25px;
+    gap: 10px;
+    padding: 0;
+    background-color: var(--color-bg);
+}
+
+.gift-card-page .overview-section .search-bar {
+    flex: 1;
+    font-size: 15px;
+    height: 40px;
+    padding: 0 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: var(--color-bg);
+}
+
+/* Optional: Responsive adjustments */
+@media (max-width: 768px) {
+    .gift-card-page .overview-section__table th,
+    .gift-card-page .overview-section__table td {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+    }
+}

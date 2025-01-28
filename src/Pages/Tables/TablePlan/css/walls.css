@@ -1,0 +1,13 @@
+/* walls.css */
+
+.table-plan-component .walls-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.table-plan-component .wall {
+  width: 100%;
+  height: 100%;
+  background-color: #654321;
+}

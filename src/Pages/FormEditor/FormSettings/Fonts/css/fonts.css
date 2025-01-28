@@ -1,0 +1,30 @@
+.form-settings-page .font-preview {
+	margin-top: 20px;
+	padding: 10px;
+	border: 1px solid #ccc;
+	min-height: 50px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #f9f9f9;
+  }
+
+ .weight-selector {
+	margin-left: 10px;
+	width: 100%;
+ }
+
+.form-group {
+	margin-bottom: 20px;
+  }
+  
+  .selectors-container {
+	display: flex;
+	width: 100%;
+	margin-bottom: 10px;
+  }
+  
+  .font-selector,
+  .weight-selector {
+	flex: 1;
+  }

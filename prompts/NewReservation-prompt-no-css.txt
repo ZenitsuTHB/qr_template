@@ -1,0 +1,2934 @@
+File Contents:
+
+--- FormField.js ---
+// src/components/Profile/FormField.jsx
+
+import React from 'react';
+
+const FormField = ({
+  label,
+  name,
+  type = 'text',
+  icon: Icon,
+  value,
+  onChange,
+  error,
+  placeholder,
+  halfWidth,
+  options = [], // New prop for select options
+  selectPlaceholder = 'Selecteer een menu', // New prop for select placeholder
+}) => {
+  return (
+    <div className={`form-group ${halfWidth ? 'half-width' : ''}`}>
+      <div className="input-container">
+        {Icon && <Icon className="input-icon" />}
+        
+        {type === 'select' ? (
+          <select
+            name={name}
+            value={value}
+            onChange={onChange}
+            aria-label={label}
+            className={`form-control ${error ? 'input-error' : ''}`}
+          >
+            <option value="">{selectPlaceholder}</option> {/* Dynamic placeholder */}
+            {options.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        ) : type === 'textarea' ? (
+          <textarea
+            name={name}
+            value={value}
+            onChange={onChange}
+            placeholder={placeholder}
+            aria-label={label}
+            className={`form-control ${error ? 'input-error' : ''}`}
+          />
+        ) : (
+          <input
+            type={type}
+            name={name}
+            placeholder={placeholder}
+            value={value}
+            onChange={onChange}
+            aria-label={label}
+            className={`form-control ${error ? 'input-error' : ''}`}
+          />
+        )}
+      </div>
+      {error && <p className="form-error">{error}</p>}
+    </div>
+  );
+};
+
+export default FormField;
+
+
+--- ReservationSidebar.js ---
+// src/components/ReservationSidebar.js
+
+import React, { useEffect, useState } from 'react';
+import ReservationStepOne from './StepOne';
+import ReservationStepTwoFiltering from './ReservationStepTwo';
+import ReservationSummary from './ReservationSummary';
+import { FaTimes } from 'react-icons/fa';
+import './css/reservationSidebar.css';
+import useApi from '../../Hooks/useApi';
+import moment from 'moment-timezone'; // Import moment-timezone for timezone handling
+import FormField from './FormField';
+
+const ReservationSidebar = ({
+  isOpen,
+  onClose,
+  formData,
+  errors,
+  handleChange,
+  handleFinalSubmit,
+  setFormData,
+  isSubmitting,
+  reservationSubmitted,
+  onNewReservation,
+}) => {
+  const api = useApi();
+  const [timeblocks, setTimeblocks] = useState([]);
+  const [loadingTimeblocks, setLoadingTimeblocks] = useState(false);
+  const [timeblocksError, setTimeblocksError] = useState(null);
+  const [menuData, setMenuData] = useState([]);
+  const [restaurantData, setRestaurantData] = useState([]);
+  
+  // New states for personeel
+  const [availablePersoneel, setAvailablePersoneel] = useState([]);
+
+  useEffect(() => {
+    if (isOpen) {
+      setLoadingTimeblocks(true);
+      const fetchData = async () => {
+        try {
+          console.log("New Reservation GET");
+          const data = await api.get(`${window.baseDomain}api/auth-restaurant/`, { noCache: true });
+          setTimeblocks(data.timeblocks || []);
+          window.timeblocks = data.timeblocks || [];
+          const generalSettings = data['general-settings'] || {};
+          window.generalSettings = generalSettings;
+          setMenuData(data.menu || []);
+          setRestaurantData(data);
+
+          
+          // Fetch personeel data
+          const personeelData = await api.get(`${window.baseDomain}api/personeel`, { noCache: true });
+          const currentDateCEST = moment().tz('Europe/Amsterdam').startOf('day'); // CEST timezone
+
+          const filteredPersoneel = personeelData.filter((personeel) => {
+            const startDate = moment(personeel.startDate, 'YYYY-MM-DD').tz('Europe/Amsterdam').startOf('day');
+            const endDate = moment(personeel.endDate, 'YYYY-MM-DD').tz('Europe/Amsterdam').endOf('day');
+            return currentDateCEST.isBetween(startDate, endDate, null, '[]'); // Inclusive
+          });
+
+          setAvailablePersoneel(filteredPersoneel);
+        } catch (err) {
+          setTimeblocksError(err);
+          console.error('Error fetching data:', err);
+        } finally {
+          setLoadingTimeblocks(false);
+        }
+      };
+      fetchData();
+    }
+  }, [isOpen, api]);
+
+  return (
+    <div className={`reservation-sidebar-component ${isOpen ? 'open' : ''}`}>
+      <div className="reservation-sidebar-content">
+        <h2 className='admin-title'>Admin Reservatie</h2>
+
+        <button className="close-sidebar-button" onClick={onClose}>
+          <FaTimes size={20} color="#000" />
+        </button>
+        {reservationSubmitted ? (
+          <ReservationSummary
+            formData={formData}
+            onNewReservation={() => {
+              setFormData({
+                guests: '',
+                date: '',
+                time: '',
+                firstName: '',
+                lastName: '',
+                email: '',
+                phone: '',
+                extraInfo: '',
+                menu: '',
+                personeel: '', // Reset personeel selection
+              });
+              onNewReservation();
+            }}
+          />
+        ) : (
+          <>
+            {/* Personeel Selection Box */}
+            {availablePersoneel.length > 0 && (
+              <div className="sidebar-section-personeel">
+                <FormField
+                  label=""
+                  name="personeel"
+                  type="select"
+                  options={availablePersoneel.map((personeel) => ({
+                    value: `${personeel.voornaam} ${personeel.achternaam}`,
+                    label: `${personeel.voornaam} ${personeel.achternaam}`,
+                  }))}
+                  value={formData.personeel}
+                  onChange={handleChange}
+                  error={errors.personeel}
+				  selectPlaceholder="Toewijzen aan persoon"
+                />
+              </div>
+            )}
+
+            <div className="sidebar-section-one">
+              <ReservationStepOne
+                formData={formData}
+                errors={errors}
+                handleChange={handleChange}
+                setFormData={setFormData}
+                timeblocks={timeblocks}
+                loadingTimeblocks={loadingTimeblocks}
+                timeblocksError={timeblocksError}
+                restaurantData={restaurantData}
+              />
+            </div>
+            <div className="sidebar-section-two">
+              <ReservationStepTwoFiltering
+                formData={formData}
+                errors={errors}
+                handleChange={handleChange}
+                isSubmitting={isSubmitting}
+                menuData={menuData}
+              />
+            </div>
+            <div className="reservation-footer">
+              <button
+                type="button"
+                className="store-reservation-button"
+                onClick={handleFinalSubmit}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Opslaan...' : 'Opslaan'}
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default ReservationSidebar;
+
+
+--- ReservationStepTwo.js ---
+import React, { useState, useEffect } from 'react';
+import FormField from './FormField';
+import { FaUser, FaPhone, FaInfoCircle, FaEnvelope } from 'react-icons/fa';
+import moment from 'moment';
+import 'moment/locale/nl'; // Import Dutch locale
+import './css/reservationsStepTwo.css';
+
+const ReservationStepTwoFiltering = ({
+  formData,
+  errors,
+  handleChange,
+  isSubmitting,
+  menuData,
+}) => {
+  const [availableMenus, setAvailableMenus] = useState([]);
+
+  useEffect(() => {
+    moment.locale('nl'); // Set locale to Dutch
+    if (formData.date && formData.time && menuData.length > 0) {
+      const selectedDate = formData.date; // 'YYYY-MM-DD' format
+      const selectedTime = formData.time; // 'HH:mm' format
+      const selectedDateTime = moment(`${selectedDate} ${selectedTime}`, 'YYYY-MM-DD HH:mm');
+
+      const filteredMenus = menuData.filter((menu) => {
+        const menuStartDate = moment(menu.startDate, 'YYYY-MM-DD');
+        const menuEndDate = moment(menu.endDate, 'YYYY-MM-DD');
+        const isDateInRange = selectedDateTime.isBetween(menuStartDate, menuEndDate, 'day', '[]');
+
+        const menuStartTime = moment(menu.startHour, 'HH:mm');
+        const menuEndTime = moment(menu.endHour, 'HH:mm');
+        const selectedTimeMoment = moment(selectedTime, 'HH:mm');
+        const isTimeInRange = selectedTimeMoment.isBetween(menuStartTime, menuEndTime, 'minute', '[]');
+
+        const selectedDayOfWeek = selectedDateTime.format('dddd').toLowerCase();
+        const daysOfWeek = menu.daysOfWeek.map((day) => day.toLowerCase());
+        const isDayMatching = daysOfWeek.length === 0 || daysOfWeek.includes(selectedDayOfWeek);
+
+        return isDateInRange && isTimeInRange && isDayMatching;
+      });
+
+      setAvailableMenus(filteredMenus);
+    } else {
+      setAvailableMenus([]);
+    }
+  }, [formData.date, formData.time, menuData]);
+
+  return (
+    <div className="reservation-step-two">
+      <div className="account-manage-form" noValidate>
+        {/* Name Fields Container */}
+
+
+        {/* Menu Selection Box */}
+        {availableMenus.length > 0 && (
+          <FormField
+            label="Menu"
+            name="menu"
+            type="select"
+            options={availableMenus.map((menu) => ({
+              value: menu.name, // Adjust according to your data structure
+              label: menu.name,
+            }))}
+            value={formData.menu}
+            onChange={handleChange}
+            error={errors.menu}
+          />
+        )}
+        
+        <div className="name-fields">
+          <FormField
+            label="Voornaam"
+            name="firstName"
+            placeholder="Voornaam"
+            value={formData.firstName}
+            onChange={handleChange}
+            error={errors.firstName}
+            icon={FaUser}
+          />
+          <FormField
+            label="Achternaam"
+            name="lastName"
+            placeholder="Achternaam"
+            value={formData.lastName}
+            onChange={handleChange}
+            error={errors.lastName}
+            icon={FaUser}
+          />
+        </div>
+
+        {/* Other Form Fields */}
+        <FormField
+          label="E-mail"
+          name="email"
+          type="email"
+          placeholder="E-mailadres"
+          value={formData.email}
+          onChange={handleChange}
+          error={errors.email}
+          icon={FaEnvelope}
+        />
+        <FormField
+          label="Telefoonnummer"
+          name="phone"
+          type="tel"
+          placeholder="Telefoonnummer"
+          value={formData.phone}
+          onChange={handleChange}
+          error={errors.phone}
+          icon={FaPhone}
+        />
+        <FormField
+          label="Extra info"
+          name="extraInfo"
+          type="textarea"
+          placeholder="Extra informatie"
+          value={formData.extraInfo}
+          onChange={handleChange}
+          error={errors.extraInfo}
+          icon={FaInfoCircle}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default ReservationStepTwoFiltering;
+
+
+--- ReservationSummary.js ---
+// src/components/ReservationForm/ReservationSummary.jsx
+
+import React from 'react';
+import './css/reservationSummary.css'; // Import the CSS file
+
+const ReservationSummary = ({ formData, onNewReservation }) => {
+  return (
+    <div className="reservation-summary">
+      <ul className="reservation-details">
+        <li><strong>Reservatie Gegevens:</strong></li> 
+        <li><strong>Aantal gasten:</strong> {formData.guests}</li> {/* Uses guests */}
+        <li><strong>Datum:</strong> {formData.date}</li>
+        <li><strong>Tijd:</strong> {formData.time}</li>
+        <li><strong>Voornaam:</strong> {formData.firstName}</li>
+        <li><strong>Achternaam:</strong> {formData.lastName}</li>
+        <li><strong>Email:</strong> {formData.email}</li>
+        <li><strong>Telefoonnummer:</strong> {formData.phone}</li>
+        {formData.menu && (
+          <li><strong>Menu:</strong> {formData.menu}</li>
+        )}
+        {formData.personeel && (
+          <li><strong>Aangemaakt door:</strong> {formData.personeel}</li>
+        )}
+        {formData.extraInfo && (
+          <li><strong>Extra informatie:</strong> {formData.extraInfo}</li>
+        )}
+      </ul>
+      <button className="button-style-3" onClick={onNewReservation}>
+        Nieuwe Reservatie Maken
+      </button>
+    </div>
+  );
+};
+
+export default ReservationSummary;
+
+
+--- StepOne/Calendar.js ---
+import React, { useState, useEffect, useRef } from 'react';
+import moment from 'moment-timezone';
+import 'moment/locale/nl';
+import { isWeekInPast, isSameDay } from './Utils/dateUtils';
+import './css/calendar.css';
+import { isDateAvailable } from './algorithm/isDateAvailable'; // Import isDateAvailable
+
+moment.locale('nl'); // Set moment to Dutch locale
+
+const Calendar = ({
+  guests,
+  selectedDate,
+  onSelectDate,
+  autoExpand,
+  reservationMode, // Receive reservationMode as prop
+  restaurantData,
+  startDate,
+  onWeekChange,
+  reservations,
+}) => {
+  const [isExpanded, setIsExpanded] = useState(autoExpand || false);
+  const calendarRef = useRef(null);
+
+  const maxDate = moment().tz('Europe/Amsterdam').add(1, 'year').endOf('day');
+
+  useEffect(() => {
+    if (autoExpand) {
+      setIsExpanded(true);
+    }
+  }, [autoExpand]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        calendarRef.current &&
+        !calendarRef.current.contains(event.target)
+      ) {
+        setIsExpanded(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const generateCalendarDays = (startDate) => {
+    const days = [];
+    const today = moment().tz('Europe/Amsterdam').startOf('day');
+    const twoWeeksFromStart = startDate.clone().add(13, 'days');
+
+    let date = startDate.clone();
+    while (date.isSameOrBefore(twoWeeksFromStart, 'day')) {
+      const formattedDate = date.format('YYYY-MM-DD');
+      const adjustedGuests =
+        reservationMode !== 'met_limieten' ? -10000 : guests; // Adjust guests
+
+      const isAvailable = isDateAvailable(
+        restaurantData,
+        formattedDate,
+        reservations,
+        adjustedGuests // Use adjustedGuests
+      );
+
+      days.push({
+        date: date.clone(),
+        isPast: date.isBefore(today, 'day'),
+        isFuture: date.isAfter(maxDate, 'day'),
+        isAvailable: isAvailable,
+      });
+
+      date.add(1, 'day');
+    }
+
+    return days;
+  };
+
+  const handleDateClick = (day) => {
+    if (day.isAvailable && !day.isPast && !day.isFuture) {
+      const formattedDate = day.date.format('YYYY-MM-DD');
+      onSelectDate(formattedDate); // Notify parent
+      setIsExpanded(false);
+    } else {
+      console.log('Date is not available for selection.');
+    }
+  };
+
+  const handlePrevWeek = () => {
+    const newStartDate = startDate.clone().subtract(1, 'week');
+    if (isWeekInPast(newStartDate)) {
+      console.log('Cannot go to previous week. It is in the past.');
+      return;
+    }
+    onWeekChange(newStartDate);
+  };
+
+  const handleNextWeek = () => {
+    const newStartDate = startDate.clone().add(1, 'week');
+    onWeekChange(newStartDate);
+  };
+
+  const formatDisplayDate = () => {
+    if (!selectedDate) {
+      return 'Selecteer een datum'; // "Select a date" in Dutch
+    }
+
+    const selectedMoment = moment(selectedDate, 'YYYY-MM-DD')
+      .tz('Europe/Amsterdam')
+      .startOf('day');
+    const today = moment().tz('Europe/Amsterdam').startOf('day');
+    const tomorrow = moment()
+      .tz('Europe/Amsterdam')
+      .add(1, 'day')
+      .startOf('day');
+
+    if (selectedMoment.isSame(today, 'day')) {
+      return 'Vandaag'; // "Today" in Dutch
+    } else if (selectedMoment.isSame(tomorrow, 'day')) {
+      return 'Morgen'; // "Tomorrow" in Dutch
+    } else {
+      // Format: e.g., "Maandag 1 Januari 2023"
+      return selectedMoment.format('dddd D MMMM YYYY');
+    }
+  };
+
+  // Recalculate days whenever startDate, guests, reservations, restaurantData, or reservationMode change
+  const days = startDate ? generateCalendarDays(startDate) : [];
+
+  return (
+    <div className="calendar-container" ref={calendarRef}>
+      <div
+        className="calendar-display"
+        onClick={() => {
+          setIsExpanded(!isExpanded);
+        }}
+      >
+        <span>{formatDisplayDate()}</span>
+        <span className="arrow">
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            style={{
+              transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+              transition: 'transform 0.2s',
+            }}
+          >
+            <path
+              d="M7 10l5 5 5-5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            />
+          </svg>
+        </span>
+      </div>
+      {isExpanded && startDate && (
+        <div className="calendar">
+          <div className="calendar-header">
+            <button type="button" onClick={handlePrevWeek}>
+              &lt;
+            </button>
+            <span>
+              {startDate.format('DD MMM')} -{' '}
+              {startDate.clone().add(13, 'days').format('DD MMM YYYY')}
+            </span>
+            <button type="button" onClick={handleNextWeek}>
+              &gt;
+            </button>
+          </div>
+          <div className="calendar-weeks-wrapper">
+            <table className="calendar-table">
+              <thead>
+                <tr>
+                  {['Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za', 'Zo'].map((day) => (
+                    <th key={day}>{day}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {Array.from({ length: 2 }).map((_, weekIndex) => (
+                  <tr key={weekIndex}>
+                    {days
+                      .slice(weekIndex * 7, weekIndex * 7 + 7)
+                      .map((dayObj, index) => {
+                        const isSelected =
+                          selectedDate &&
+                          isSameDay(
+                            dayObj.date,
+                            moment(selectedDate, 'YYYY-MM-DD').tz(
+                              'Europe/Amsterdam'
+                            )
+                          );
+                        const classNames = [];
+                        if (dayObj.isPast) {
+                          classNames.push('gray-out');
+                        } else if (dayObj.isAvailable) {
+                          classNames.push('available');
+                        } else {
+                          classNames.push('unavailable');
+                        }
+                        if (isSelected) {
+                          classNames.push('selected');
+                        }
+
+                        return (
+                          <td
+                            key={index}
+                            className={classNames.join(' ')}
+                            onClick={() => handleDateClick(dayObj)}
+                            style={{
+                              '--animation-order': index + weekIndex * 7,
+                            }}
+                          >
+                            <div className="day-square">
+                              {dayObj.date.date()}
+                            </div>
+                          </td>
+                        );
+                      })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Calendar;
+
+
+--- StepOne/DateSelector.js ---
+import React from 'react';
+import Calendar from './Calendar';
+import moment from 'moment';
+
+const DateSelector = ({
+  guests,
+  formData,
+  handleChange,
+  resetFormDataFields,
+  timeblocks,
+  restaurantData,
+  reservations,
+  startDate,
+  onWeekChange,
+  reservationMode, // Receive reservationMode as prop
+}) => {
+  const handleDateSelect = (date) => {
+    const formattedDate = moment(date).format('YYYY-MM-DD');
+    console.log('Selected date:', formattedDate);
+    handleChange({
+      target: { name: 'date', value: formattedDate },
+    });
+    resetFormDataFields(['time']);
+  };
+
+  return (
+    <div className="form-group date-selector-container">
+      <Calendar
+        guests={guests}
+        selectedDate={formData.date || null}
+        onSelectDate={handleDateSelect}
+        autoExpand={false}
+        reservationMode={reservationMode} // Pass reservationMode to Calendar
+        restaurantData={restaurantData}
+        startDate={startDate}
+        onWeekChange={onWeekChange}
+        reservations={reservations}
+      />
+    </div>
+  );
+};
+
+export default DateSelector;
+
+
+--- StepOne/TimeSelector.js ---
+import React, { useState, useEffect, useRef } from 'react';
+import './css/timeSelector.css';
+import { getAvailableTimeblocks } from './algorithm/getAvailableTimeblocks';
+
+const TimeSelector = ({
+  guests,
+  formData,
+  handleChange,
+  field,
+  selectedDate,
+  expanded,
+  setCurrentExpandedField,
+  restaurantData,
+  reservations,
+  reservationMode, // Receive reservationMode as prop
+}) => {
+  const [isExpanded, setIsExpanded] = useState(expanded || false);
+  const [availableTimes, setAvailableTimes] = useState([]);
+  const timeSelectorRef = useRef(null);
+
+  useEffect(() => {
+    if (selectedDate && guests && restaurantData && reservations) {
+      const adjustedGuests =
+        reservationMode !== 'met_limieten' ? -10000 : guests; // Adjust guests
+      const timeblocks = getAvailableTimeblocks(
+        restaurantData,
+        selectedDate,
+        reservations,
+        adjustedGuests // Use adjustedGuests
+      );
+
+      // Convert timeblocks object to array suitable for rendering
+      const times = Object.keys(timeblocks).map((time) => ({
+        value: time,
+        label: timeblocks[time].name || time,
+      }));
+
+      // Sort times
+      times.sort((a, b) => {
+        const [aHours, aMinutes] = a.value.split(':').map(Number);
+        const [bHours, bMinutes] = b.value.split(':').map(Number);
+        return aHours * 60 + aMinutes - (bHours * 60 + bMinutes);
+      });
+
+      setAvailableTimes(times);
+    } else {
+      setAvailableTimes([]);
+    }
+  }, [
+    selectedDate,
+    guests,
+    restaurantData,
+    reservations,
+    reservationMode, // Add reservationMode to dependencies
+  ]);
+
+  const handleTimeSelect = (timeValue) => {
+    handleChange({
+      target: { name: field.id, value: timeValue },
+    });
+    setIsExpanded(false);
+    if (setCurrentExpandedField) {
+      setCurrentExpandedField(null);
+    }
+  };
+
+  const formatDisplayTime = () => {
+    if (formData[field.id]) {
+      const selected = availableTimes.find(
+        (time) => time.value === formData[field.id]
+      );
+      return selected ? selected.label : 'Selecteer een tijd';
+    }
+    return 'Selecteer een tijd';
+  };
+
+  if (!field) {
+    return null;
+  }
+
+  return (
+    <div className="form-group time-selector-container" ref={timeSelectorRef}>
+      {!selectedDate ? (
+        <p className="info-text">Selecteer eerst een datum.</p>
+      ) : (
+        <>
+          <div
+            className="time-display"
+            onClick={() => {
+              setIsExpanded(!isExpanded);
+              if (!isExpanded && setCurrentExpandedField) {
+                setCurrentExpandedField('time');
+              }
+            }}
+          >
+            <span>{formatDisplayTime()}</span>
+            <span className="arrow">
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                style={{
+                  transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                  transition: 'transform 0.2s',
+                }}
+              >
+                <path
+                  d="M7 10l5 5 5-5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                />
+              </svg>
+            </span>
+          </div>
+          {isExpanded && (
+            <div className="time-selector">
+              {availableTimes.length === 0 ? (
+                <div className="no-times">Geen beschikbare tijden.</div>
+              ) : (
+                <div className="time-options">
+                  {availableTimes.map((time) => (
+                    <div
+                      key={time.value}
+                      className={`time-option ${
+                        formData[field.id] === time.value ? 'selected' : ''
+                      }`}
+                      onClick={() => handleTimeSelect(time.value)}
+                    >
+                      {time.label}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+};
+
+export default TimeSelector;
+
+
+--- StepOne/Utils/dateUtils.js ---
+// src/Pages/NewReservation/Utils/dateUtils.js
+
+import moment from 'moment-timezone';
+
+export const isWeekInPast = (weekStartDate) => {
+  const today = moment().tz('Europe/Brussels').startOf('day');
+  const weekEndDate = weekStartDate.clone().add(6, 'days').endOf('day');
+  return weekEndDate.isBefore(today);
+};
+
+export const isSameDay = (date1, date2) => date1.isSame(date2, 'day');
+
+
+--- StepOne/Utils/dates/blockDates.js ---
+// src/Pages/NewReservation/Utils/dates/blockDates.js
+
+import { DateTime } from 'luxon';
+
+const getOrInitializeArray = (dict, key) => {
+  if (!Array.isArray(dict[key])) {
+    dict[key] = [];
+  }
+  return dict[key];
+};
+
+const initializeDictionaries = () => {
+  window.dateDictionary = window.dateDictionary || {};
+  window.shiftsPerDate = window.shiftsPerDate || {};
+};
+
+const processTimeblock = (block) => {
+  if (!block.date) {
+    return;
+  }
+
+  const dateString = DateTime.fromISO(block.date, { zone: 'Europe/Brussels' }).toISODate();
+
+  // Check if date is in closedDates
+  if (window.closedDates.has(dateString)) {
+    return;
+  }
+
+  // Check for exceptional openings
+  if (window.exceptionalOpenings[dateString]) {
+    const exceptionalOpening = window.exceptionalOpenings[dateString];
+    window.dateDictionary[dateString] = [
+      {
+        startTime: exceptionalOpening.startTime,
+        endTime: exceptionalOpening.endTime,
+      },
+    ];
+  } else {
+    // Use the block's times
+    if (!window.dateDictionary[dateString]) {
+      window.dateDictionary[dateString] = [];
+    }
+    window.dateDictionary[dateString].push({
+      startTime: block.startTime || null,
+      endTime: block.endTime || null,
+    });
+  }
+
+  // Process shifts
+  if (block.shifts && Array.isArray(block.shifts) && block.shifts.length > 0) {
+    const shiftsArray = getOrInitializeArray(window.shiftsPerDate, dateString);
+
+    block.shifts.forEach((shift) => {
+      const exists = shiftsArray.some(
+        (existingShift) =>
+          existingShift.name === shift.name && existingShift.startTime === shift.startTime
+      );
+      if (!exists) {
+        shiftsArray.push({
+          name: shift.name || '',
+          startTime: shift.startTime || '',
+          endTime: shift.endTime || null,
+        });
+      }
+    });
+  }
+};
+
+export const getBlockSettingsDates = (timeblocks) => {
+  initializeDictionaries();
+  const dates = [];
+
+  timeblocks.forEach((block) => {
+    processTimeblock(block);
+    // Do not add date if not in dateDictionary (i.e., date was skipped)
+    if (block.date) {
+      const dateString = DateTime.fromISO(block.date, { zone: 'Europe/Brussels' }).toISODate();
+      if (window.dateDictionary[dateString]) {
+        dates.push(dateString);
+      }
+    }
+  });
+
+  return dates;
+};
+
+
+--- StepOne/Utils/dates/schemeDates.js ---
+// src/Pages/NewReservation/Utils/dates/schemeDates.js
+
+import { DateTime } from 'luxon';
+
+const getOrInitializeArray = (dict, key) => {
+  if (!Array.isArray(dict[key])) {
+    dict[key] = [];
+  }
+  return dict[key];
+};
+
+const initializeDictionaries = () => {
+  window.dateDictionary = window.dateDictionary || {};
+  window.shiftsPerDate = window.shiftsPerDate || {};
+};
+
+const isWithinPeriod = (currentDate, endDate) => {
+  return currentDate <= endDate;
+};
+
+const processDaySetting = (dateString, daySetting) => {
+  // Check if date is in closedDates
+  if (window.closedDates.has(dateString)) {
+    return;
+  }
+
+  // Check for exceptional openings
+  if (window.exceptionalOpenings[dateString]) {
+    const exceptionalOpening = window.exceptionalOpenings[dateString];
+    window.dateDictionary[dateString] = [
+      {
+        startTime: exceptionalOpening.startTime,
+        endTime: exceptionalOpening.endTime,
+      },
+    ];
+  } else {
+    // Use the daySetting's times
+    if (!window.dateDictionary[dateString]) {
+      window.dateDictionary[dateString] = [];
+    }
+    window.dateDictionary[dateString].push({
+      startTime: daySetting.startTime || null,
+      endTime: daySetting.endTime || null,
+    });
+  }
+
+  // Process shifts
+  if (
+    daySetting.shiftsEnabled &&
+    Array.isArray(daySetting.shifts) &&
+    daySetting.shifts.length > 0
+  ) {
+    const shiftsArray = getOrInitializeArray(window.shiftsPerDate, dateString);
+
+    daySetting.shifts.forEach((shift) => {
+      const exists = shiftsArray.some(
+        (existingShift) =>
+          existingShift.name === shift.name && existingShift.startTime === shift.startTime
+      );
+      if (!exists) {
+        shiftsArray.push({
+          name: shift.name || '',
+          startTime: shift.startTime || '',
+          endTime: shift.endTime || null,
+        });
+      }
+    });
+  }
+};
+
+export const getSchemeSettingsDates = (timeblocks, maxDate) => {
+  initializeDictionaries();
+  const dates = [];
+  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+  timeblocks.forEach((block) => {
+    if (!block.schemeSettings) {
+      return;
+    }
+
+    const { schemeSettings } = block;
+    let currentDate = DateTime.now().setZone('Europe/Brussels').startOf('day');
+
+    // Adjust endDate based on dagenInToekomst
+    let endDate = maxDate;
+
+    if (schemeSettings.period && schemeSettings.period.enabled) {
+      const { startDate, endDate: periodEndDate } = schemeSettings.period;
+      if (startDate && periodEndDate) {
+        currentDate = DateTime.fromISO(startDate, { zone: 'Europe/Brussels' }).startOf('day');
+        const schemeEndDate = DateTime.fromISO(periodEndDate, { zone: 'Europe/Brussels' }).endOf('day');
+        // Use the minimum of schemeEndDate and maxDate
+        endDate = schemeEndDate < maxDate ? schemeEndDate : maxDate;
+      }
+    }
+
+    while (isWithinPeriod(currentDate, endDate)) {
+      const dayOfWeek = currentDate.weekday % 7;
+      const dayName = dayNames[dayOfWeek];
+      const daySetting = schemeSettings[dayName];
+      const dateString = currentDate.toISODate();
+      if (daySetting && daySetting.enabled) {
+        processDaySetting(dateString, daySetting);
+        if (window.dateDictionary[dateString]) {
+          dates.push(dateString);
+        }
+      }
+      currentDate = currentDate.plus({ days: 1 });
+    }
+  });
+  return dates;
+};
+
+
+--- StepOne/Utils/exceptions.js ---
+// Utils/exceptions.js
+
+import { DateTime } from 'luxon';
+
+export const collectExceptions = (timeblocks) => {
+    // Initialize global exception containers
+    window.closedDates = new Set();
+    window.exceptionalOpenings = {};
+    window.uitzonderlijkeCapaciteit = {}; // Initialize capaciteit exceptions
+
+    timeblocks.forEach((block) => {
+        if (!block.exceptionalDays) {
+            return;
+        }
+
+        const { exceptionalDays } = block;
+
+        // Process sluitingsperiode (closing periods)
+        if (Array.isArray(exceptionalDays.sluitingsperiode)) {
+            exceptionalDays.sluitingsperiode.forEach((period) => {
+                if (period.enabled) {
+                    const { startDate, endDate } = period;
+                    if (startDate && endDate) {
+                        let currentDate = DateTime.fromISO(startDate, { zone: "Europe/Brussels" }).startOf('day');
+                        const endDateObj = DateTime.fromISO(endDate, { zone: "Europe/Brussels" }).startOf('day');
+                        while (currentDate <= endDateObj) {
+                            const dateString = currentDate.toISODate();
+                            window.closedDates.add(dateString);
+                            console.log(`[collectExceptions] Adding ${dateString} to closedDates due to sluitingsperiode.`);
+                            currentDate = currentDate.plus({ days: 1 });
+                        }
+                    }
+                }
+            });
+        }
+
+        // Process uitzonderlijkeOpeningsuren (exceptional opening hours)
+        if (Array.isArray(exceptionalDays.uitzonderlijkeOpeningsuren)) {
+            exceptionalDays.uitzonderlijkeOpeningsuren.forEach((opening) => {
+                if (opening.enabled) {
+                    const { date, startTime, endTime } = opening;
+                    if (date && startTime && endTime) {
+                        window.exceptionalOpenings[date] = {
+                            startTime,
+                            endTime,
+                        };
+                        console.log(`[collectExceptions] Adding exceptional opening for ${date}: ${startTime} - ${endTime}`);
+                    }
+                }
+            });
+        }
+
+        // Process uitzonderlijkeCapaciteit (exceptional capacity)
+        if (Array.isArray(exceptionalDays.uitzonderlijkeCapaciteit)) {
+            exceptionalDays.uitzonderlijkeCapaciteit.forEach((capacityEntry) => {
+                if (capacityEntry.enabled) {
+                    const { date, capacity } = capacityEntry;
+                    if (date && capacity !== undefined && capacity !== null) {
+                        // Convert capacity to a number if it's a string
+                        const numericCapacity = Number(capacity);
+                        if (!isNaN(numericCapacity)) {
+                            window.uitzonderlijkeCapaciteit[date] = numericCapacity;
+                            console.log(`[collectExceptions] Setting exceptional capacity for ${date}: ${numericCapacity}`);
+                        } else {
+                            console.warn(`[collectExceptions] Invalid capacity value for ${date}: ${capacity}`);
+                        }
+                    }
+                }
+            });
+        }
+    });
+};
+
+
+--- StepOne/Utils/generateDates.js ---
+// Utils/generateDates.js
+
+import { DateTime } from 'luxon';
+import { collectExceptions } from './exceptions';
+import { getSchemeSettingsDates } from './dates/schemeDates';
+import { getBlockSettingsDates } from './dates/blockDates';
+import { generateAvailableTimesForDate } from './generateTimes'; // Ensure correct import path
+
+const initializeDictionaries = () => {
+    window.dateDictionary = window.dateDictionary || {};
+    window.shiftsPerDate = window.shiftsPerDate || {};
+};
+
+export const generateAvailableDates = (guests, timeblocks = [], reservations = []) => {
+    initializeDictionaries();
+    collectExceptions(timeblocks);
+
+    const dagenInToekomstRaw = window.generalSettings?.dagenInToekomst;
+    let dagenInToekomst = 365;
+
+    if (dagenInToekomstRaw) {
+        if (typeof dagenInToekomstRaw === 'number') {
+            dagenInToekomst = dagenInToekomstRaw;
+        } else if (typeof dagenInToekomstRaw === 'string') {
+            dagenInToekomst = parseInt(dagenInToekomstRaw, 10);
+            if (isNaN(dagenInToekomst)) {
+                dagenInToekomst = 365;
+            }
+        }
+    }
+
+    const today = DateTime.now().setZone("Europe/Brussels").startOf('day');
+    const maxDate = today.plus({ days: dagenInToekomst - 1 }).endOf('day'); // Subtract 1 because we count today as day 1
+
+    const blockDates = getBlockSettingsDates(timeblocks);
+    const schemeDates = getSchemeSettingsDates(timeblocks, maxDate);
+    const combinedDates = [...blockDates, ...schemeDates];
+
+    const filteredDates = combinedDates.filter(dateStr => {
+        const date = DateTime.fromISO(dateStr, { zone: "Europe/Brussels" }).startOf('day');
+        return date >= today && date <= maxDate;
+    });
+
+    let uniqueDates = Array.from(new Set(filteredDates)).sort();
+
+    // Initialize countingDictionary
+    const countingDictionary = {};
+
+    // Retrieve intervalReservatie and validate it
+    const intervalReservatie = window.generalSettings?.intervalReservatie;
+    let intervalMinutes = 30; // Default value
+
+    if (
+        typeof intervalReservatie === 'number' &&
+        Number.isInteger(intervalReservatie) &&
+        intervalReservatie > 0
+    ) {
+        intervalMinutes = intervalReservatie;
+    } else {
+        console.warn(
+            `[generateAvailableDates] Invalid intervalReservatie value "${intervalReservatie}". Using default intervalMinutes = 30`
+        );
+    }
+
+    // Retrieve duurReservatie and validate it
+    const duurReservatieRaw = window.generalSettings?.duurReservatie;
+    let duurReservatieMinutes = 120; // Default duration in minutes (2 hours)
+
+    if (
+        typeof duurReservatieRaw === 'number' &&
+        Number.isInteger(duurReservatieRaw) &&
+        duurReservatieRaw > 0
+    ) {
+        duurReservatieMinutes = duurReservatieRaw;
+    } else {
+        console.warn(
+            `[generateAvailableDates] Invalid duurReservatie value "${duurReservatieRaw}". Using default duurReservatieMinutes = 120`
+        );
+    }
+
+    // Retrieve uurOpVoorhand and validate it
+    let uurOpVoorhand = 0; // Default value
+
+    // Function to generate times for a given dateKey
+    const generateAvailableTimesForDateKey = (guests, dateKey) => {
+        const dateDictionary = window.dateDictionary;
+        const shiftsPerDate = window.shiftsPerDate;
+        const selectedDate = DateTime.fromISO(dateKey, { zone: "Europe/Brussels" });
+
+        if (!dateDictionary[dateKey] || dateDictionary[dateKey].length === 0) {
+            return [];
+        }
+
+        const shiftData =
+            shiftsPerDate && Array.isArray(shiftsPerDate[dateKey]) ? shiftsPerDate[dateKey] : [];
+
+        if (shiftData.length > 0) {
+            const shiftButtons = shiftData.map((shift) => ({
+                label: shift.name,
+                value: shift.startTime,
+            }));
+            return shiftButtons.map(button => button.value);
+        }
+
+        const times = [];
+
+        dateDictionary[dateKey].forEach(({ startTime, endTime }) => {
+
+            let startDateTime = DateTime.fromFormat(startTime, 'HH:mm', { zone: "Europe/Brussels" }).set({
+                year: selectedDate.year,
+                month: selectedDate.month,
+                day: selectedDate.day
+            });
+
+            const endDateTime = DateTime.fromFormat(endTime, 'HH:mm', { zone: "Europe/Brussels" }).set({
+                year: selectedDate.year,
+                month: selectedDate.month,
+                day: selectedDate.day
+            });
+
+            while (startDateTime < endDateTime) {
+                const timeString = startDateTime.toFormat('HH:mm');
+                times.push(timeString);
+                startDateTime = startDateTime.plus({ minutes: intervalMinutes });
+            }
+        });
+
+        const uniqueTimes = [...new Set(times)].sort(
+            (a, b) => DateTime.fromFormat(a, 'HH:mm') - DateTime.fromFormat(b, 'HH:mm')
+        );
+
+        return uniqueTimes;
+    };
+
+    // Generate countingDictionary with initial counts
+    uniqueDates.forEach(dateKey => {
+        const times = generateAvailableTimesForDateKey(guests, dateKey);
+        countingDictionary[dateKey] = {};
+
+        times.forEach(time => {
+            countingDictionary[dateKey][time] = 0;
+        });
+    });
+
+    // Process reservations to update counts
+    reservations.forEach(reservation => {
+        const reservationDate = reservation.date; // string in "YYYY-MM-DD" format
+        const reservationTime = reservation.time; // string in "HH:mm"
+        const numberOfGuests = reservation.guests;
+
+        if (countingDictionary[reservationDate]) {
+            const resStartDateTime = DateTime.fromISO(`${reservationDate}T${reservationTime}`, { zone: "Europe/Brussels" });
+
+            // Use duurReservatieMinutes instead of fixed 2 hours
+            const resEndDateTime = resStartDateTime.plus({ minutes: duurReservatieMinutes });
+
+            // For each time period in countingDictionary[reservationDate]
+            Object.keys(countingDictionary[reservationDate]).forEach(timePeriodStart => {
+                const timePeriodStartDateTime = DateTime.fromISO(`${reservationDate}T${timePeriodStart}`, { zone: "Europe/Brussels" });
+                const timePeriodEndDateTime = timePeriodStartDateTime.plus({ minutes: intervalMinutes });
+
+                // Check if reservation interval collides with time period
+                if (resStartDateTime < timePeriodEndDateTime && resEndDateTime > timePeriodStartDateTime) {
+                    // There is a collision
+                    countingDictionary[reservationDate][timePeriodStart] += numberOfGuests;
+                }
+            });
+        }
+    });
+
+    // Print the countingDictionary
+    console.log('[generateAvailableDates] Counting Dictionary:', countingDictionary);
+
+    // Store countingDictionary in window for access in generateAvailableTimesForDate
+    window.countingDictionary = countingDictionary;
+
+    // Remove dates with no available time buttons
+    const datesToRemove = [];
+    uniqueDates.forEach(dateKey => {
+        const selectedDate = DateTime.fromISO(dateKey, { zone: "Europe/Brussels" }).toJSDate();
+        const availableTimeButtons = generateAvailableTimesForDate(guests, selectedDate);
+
+        if (availableTimeButtons.length === 0) {
+            datesToRemove.push(dateKey);
+        }
+    });
+
+    // Filter out the dates to remove
+    uniqueDates = uniqueDates.filter(dateKey => !datesToRemove.includes(dateKey));
+
+    // Print the final uniqueDates
+    console.log('[generateAvailableDates] Final Unique Dates:', uniqueDates);
+
+    return uniqueDates;
+};
+
+
+--- StepOne/Utils/generateTimes.js ---
+// Utils/generateTimes.js
+
+import { DateTime } from 'luxon';
+
+const TARGET_DATE = '2024-12-03'; // The date we're focusing on
+
+const formatDateKey = (date) => {
+    const formattedDate = DateTime.fromJSDate(date).toISODate();
+    return formattedDate;
+};
+
+export const generateAvailableTimesForDate = (guests, selectedDate) => {
+    const dateDictionary = window.dateDictionary;
+    const shiftsPerDate = window.shiftsPerDate;
+    const dateKey = formatDateKey(selectedDate);
+    const now = DateTime.now().setZone("Europe/Brussels");
+    const selectedDateTime = DateTime.fromJSDate(selectedDate).setZone("Europe/Brussels");
+    const isToday = selectedDateTime.hasSame(now, 'day');
+
+    if (dateKey === TARGET_DATE) {
+        console.log(`[generateAvailableTimesForDate] Generating available times for dateKey: ${dateKey}`);
+    }
+
+    // Retrieve and validate 'uurOpVoorhand' from generalSettings
+    const uurOpVoorhandRaw = window.generalSettings?.uurOpVoorhand;
+    let uurOpVoorhand = 4; // Default value
+
+    if (typeof uurOpVoorhandRaw === 'number' && uurOpVoorhandRaw >= 0) {
+        uurOpVoorhand = uurOpVoorhandRaw;
+        if (dateKey === TARGET_DATE) {
+            console.log(`[generateAvailableTimesForDate] 'uurOpVoorhand' set to: ${uurOpVoorhand} hours`);
+        }
+    } else {
+        console.warn(
+            `[generateAvailableTimesForDate] Invalid or missing 'uurOpVoorhand' value ("${uurOpVoorhandRaw}"). Using default: ${uurOpVoorhand} hours`
+        );
+    }
+
+    let minAllowedTime;
+    if (isToday) {
+        minAllowedTime = now.plus({ hours: uurOpVoorhand });
+        if (dateKey === TARGET_DATE) {
+            console.log(`[generateAvailableTimesForDate] Today (${dateKey}) - minAllowedTime set to: ${minAllowedTime.toFormat('HH:mm')}`);
+        }
+    } else {
+        minAllowedTime = selectedDateTime.startOf('day');
+        if (dateKey === TARGET_DATE) {
+            console.log(`[generateAvailableTimesForDate] Future date (${dateKey}) - minAllowedTime set to start of the day (${minAllowedTime.toFormat('HH:mm')})`);
+        }
+    }
+
+    // Retrieve and validate 'intervalReservatie' from generalSettings
+    const intervalReservatie = window.generalSettings?.intervalReservatie;
+    let intervalMinutes = 30; // Default value
+
+    if (
+        typeof intervalReservatie === 'number' &&
+        Number.isInteger(intervalReservatie) &&
+        intervalReservatie > 0
+    ) {
+        intervalMinutes = intervalReservatie;
+        if (dateKey === TARGET_DATE) {
+            console.log(`[generateAvailableTimesForDate] 'intervalReservatie' set to: ${intervalMinutes} minutes`);
+        }
+    } else {
+        console.warn(
+            `[generateAvailableTimesForDate] Invalid or missing 'intervalReservatie' value ("${intervalReservatie}"). Using default: ${intervalMinutes} minutes`
+        );
+    }
+
+    // Retrieve and validate 'duurReservatie' from generalSettings
+    const duurReservatieRaw = window.generalSettings?.duurReservatie;
+    let duurReservatieMinutes = 120; // Default duration in minutes (2 hours)
+
+    if (
+        typeof duurReservatieRaw === 'number' &&
+        Number.isInteger(duurReservatieRaw) &&
+        duurReservatieRaw > 0
+    ) {
+        duurReservatieMinutes = duurReservatieRaw;
+        if (dateKey === TARGET_DATE) {
+            console.log(`[generateAvailableTimesForDate] 'duurReservatie' set to: ${duurReservatieMinutes} minutes`);
+        }
+    } else {
+        console.warn(
+            `[generateAvailableTimesForDate] Invalid or missing 'duurReservatie' value ("${duurReservatieRaw}"). Using default: ${duurReservatieMinutes} minutes`
+        );
+    }
+
+    if (!dateDictionary[dateKey] || dateDictionary[dateKey].length === 0) {
+        if (dateKey === TARGET_DATE) {
+            console.warn(`[generateAvailableTimesForDate] No dateDictionary entries found for dateKey: ${dateKey}`);
+        }
+        return [];
+    }
+
+    const shiftData =
+        shiftsPerDate && Array.isArray(shiftsPerDate[dateKey]) ? shiftsPerDate[dateKey] : [];
+
+    let timeButtons = [];
+
+    if (shiftData.length > 0) {
+        if (dateKey === TARGET_DATE) {
+            console.log(`[generateAvailableTimesForDate] Found ${shiftData.length} shiftData entries for dateKey: ${dateKey}`);
+        }
+        timeButtons = shiftData.map((shift) => ({
+            label: shift.name,
+            value: shift.startTime,
+        }));
+        const availableTimes = timeButtons.map(button => button.value);
+        if (dateKey === TARGET_DATE) {
+            console.log(`[generateAvailableTimesForDate] Shift-based available times for ${dateKey}:`, availableTimes);
+        }
+    } else {
+        const times = [];
+
+        dateDictionary[dateKey].forEach(({ startTime, endTime }) => {
+            let startDateTime = DateTime.fromFormat(startTime, 'HH:mm', { zone: "Europe/Brussels" }).set({
+                year: selectedDate.getFullYear(),
+                month: selectedDate.getMonth() + 1,
+                day: selectedDate.getDate()
+            });
+
+            const endDateTime = DateTime.fromFormat(endTime, 'HH:mm', { zone: "Europe/Brussels" }).set({
+                year: selectedDate.getFullYear(),
+                month: selectedDate.getMonth() + 1,
+                day: selectedDate.getDate()
+            });
+
+            if (dateKey === TARGET_DATE) {
+                console.log(`[generateAvailableTimesForDate] Processing time block for ${dateKey}: ${startTime} - ${endTime}`);
+            }
+
+            while (startDateTime < endDateTime) {
+                if (startDateTime >= minAllowedTime) {
+                    const timeString = startDateTime.toFormat('HH:mm');
+                    times.push(timeString);
+                }
+                startDateTime = startDateTime.plus({ minutes: intervalMinutes });
+            }
+        });
+
+        const uniqueTimes = [...new Set(times)].sort(
+            (a, b) => DateTime.fromFormat(a, 'HH:mm') - DateTime.fromFormat(b, 'HH:mm')
+        );
+        if (dateKey === TARGET_DATE) {
+            console.log(`[generateAvailableTimesForDate] Generated unique available times for ${dateKey}:`, uniqueTimes);
+        }
+
+        timeButtons = uniqueTimes.map((time) => ({
+            label: time,
+            value: time,
+        }));
+    }
+
+    // Determine capacityLimit: use uitzonderlijkeCapaciteit if defined, else use general zitplaatsen
+    const uitzonderlijkeCapaciteit = window.uitzonderlijkeCapaciteit || {};
+    const exceptionalCapacity = uitzonderlijkeCapaciteit[dateKey];
+    const capacityLimit = (typeof exceptionalCapacity === 'number')
+        ? exceptionalCapacity
+        : (window.generalSettings?.zitplaatsen || 0);
+
+    if (typeof capacityLimit !== 'number' || capacityLimit < 0) {
+        console.warn(
+            `[generateAvailableTimesForDate] Invalid capacityLimit value ("${capacityLimit}"). Defaulting to 0.`
+        );
+    }
+
+    const finalCapacityLimit = (typeof capacityLimit === 'number' && capacityLimit >= 0)
+        ? capacityLimit
+        : 0;
+
+    if (dateKey === TARGET_DATE) {
+        console.log(`[generateAvailableTimesForDate] Capacity limit for ${dateKey}: ${finalCapacityLimit} guests`);
+    }
+
+    // Filter timeButtons based on countingDictionary and capacityLimit
+    const countingDictionary = window.countingDictionary || {};
+
+    if (countingDictionary[dateKey]) {
+        if (dateKey === TARGET_DATE) {
+            console.log(`[generateAvailableTimesForDate] Applying capacity constraints for ${dateKey}`);
+        }
+
+        // Define the checkConsecutiveTimes function
+        const checkConsecutiveTimes = (startTime) => {
+            const intervalsToCheck = [];
+            let currentTime = DateTime.fromFormat(startTime, 'HH:mm', { zone: "Europe/Brussels" });
+            const endTime = currentTime.plus({ minutes: duurReservatieMinutes });
+
+            while (currentTime < endTime) {
+                const timeString = currentTime.toFormat('HH:mm');
+                intervalsToCheck.push(timeString);
+                currentTime = currentTime.plus({ minutes: intervalMinutes });
+            }
+
+            for (const time of intervalsToCheck) {
+                const guestsCount = countingDictionary[dateKey][time] || 0;
+                const availableCapacity = finalCapacityLimit - guestsCount;
+
+                if (dateKey === TARGET_DATE) {
+                    console.log(`[checkConsecutiveTimes] Time: ${time}, GuestsCount: ${guestsCount}, AvailableCapacity: ${availableCapacity}`);
+                }
+
+                if (guests > availableCapacity) {
+                    // Not enough capacity at this time interval
+                    return false;
+                }
+            }
+
+            // All intervals have sufficient capacity
+            return true;
+        };
+
+        timeButtons = timeButtons.filter(button => {
+            const time = button.value;
+
+            // Use the checkConsecutiveTimes function
+            const canAccommodate = checkConsecutiveTimes(time);
+
+            if (dateKey === TARGET_DATE) {
+                console.log(`[generateAvailableTimesForDate] Time: ${time}, Can Accommodate: ${canAccommodate}`);
+            }
+
+            return canAccommodate;
+        });
+    } else {
+        if (dateKey === TARGET_DATE) {
+            console.warn(`[generateAvailableTimesForDate] No countingDictionary entries found for dateKey: ${dateKey}. All times are available.`);
+        }
+    }
+
+    if (dateKey === TARGET_DATE) {
+        console.log(`[generateAvailableTimesForDate] Final available time buttons for ${dateKey}:`, timeButtons);
+    }
+
+    return timeButtons;
+};
+
+
+--- StepOne/ValueSelector.js ---
+// src/Pages/NewReservation/ValueSelector.jsx
+
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import './css/valueSelector.css';
+
+const ValueSelectorGuests = ({ setGuests, value, onChange }) => {
+  const predefinedValues = [1, 2, 3, '4+'];
+  const [selectedValue, setSelectedValue] = useState(value || '');
+  const [showSlider, setShowSlider] = useState(false);
+
+  const handlePredefinedValueClick = (val) => {
+    if (val === '4+') {
+      setShowSlider(true);
+      setSelectedValue(4);
+      setGuests(4);
+      onChange({ target: { name: 'guests', value: 4 } });
+    } else {
+      setShowSlider(false);
+      setSelectedValue(val);
+      setGuests(val);
+      onChange({ target: { name: 'guests', value: val } });
+    }
+  };
+
+  const handleSliderChange = (e) => {
+    const val = e.target.value;
+    setSelectedValue(val);
+    setGuests(val);
+    onChange({ target: { name: 'guests', value: val } });
+  };
+
+  const handleInputChange = (e) => {
+    const val = e.target.value;
+    setSelectedValue(val);
+    setGuests(val);
+    onChange({ target: { name: 'guests', value: val } });
+  };
+
+  return (
+    <div className="value-selector">
+      <div className="predefined-values">
+        {predefinedValues.map((val) => (
+          <button
+            key={val}
+            type="button"
+            className={`predefined-value-button ${
+              selectedValue == val || (val === '4+' && showSlider) ? 'active' : ''
+            }`}
+            onClick={() => handlePredefinedValueClick(val)}
+          >
+            {val === '4+' ? '4+' : `${val} ${val === 1 ? 'p' : 'p'}`}
+          </button>
+        ))}
+      </div>
+      <AnimatePresence>
+        {showSlider && (
+          <motion.div
+            className="slider-container"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+          >
+            <input
+              type="range"
+              min="4"
+              max="15"
+              step="1"
+              value={selectedValue}
+              onChange={handleSliderChange}
+              className="slider non-absolute"
+            />
+            <input
+              type="number"
+              name="guests"
+              value={selectedValue}
+              onChange={handleInputChange}
+              className="value-input"
+              min="4"
+              max="100"
+              step="1"
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+export default ValueSelectorGuests;
+
+
+--- StepOne/algorithm/.DS_Store ---
+   Bud1           	                                                           r i t h m .                                                                                                                                                                                                                                                                                                                                                                                                                                          
+ a l g o r i t h m . z i pIlocblob        �������      g e t A v a i l a b l e T i m e b l o c k s . j sIlocblob     �   .������      i s D a t e A v a i l a b l e . j sIlocblob     g   .������     
+ p r o c e s s i n gIlocblob      A   .������      r e s e r v a t i o n _ d a t aIlocblob      �   .������      r e s t a u r a n t _ d a t aIlocblob        .������                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @      �                                        @      �                                          @      �                                          @                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   E  	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       DSDB                                 `          �                                         @      �                                          @      �                                          @                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+
+--- StepOne/algorithm/getAvailableTimeblocks.js ---
+// getAvailableTimeblocks.js
+
+const { timeblocksAvailable } = require('./processing/timeblocksAvailable');
+
+/**
+ * Parses a time string in "HH:MM" format into a Date object on a specific date.
+ * @param {string} dateStr - The date string in "YYYY-MM-DD" format.
+ * @param {string} timeStr - Time string in "HH:MM" format.
+ * @param {string} timeZone - The IANA time zone identifier.
+ * @returns {Date} Date object representing the time on the specified date and time zone.
+ */
+function parseDateTimeInTimeZone(dateStr, timeStr, timeZone) {
+  const [year, month, day] = dateStr.split('-').map(Number);
+  const [hours, minutes] = timeStr.split(':').map(Number);
+
+  // Create a date object in UTC
+  const date = new Date(Date.UTC(year, month - 1, day, hours, minutes));
+  // Convert that UTC date/time to the specified time zone
+  const dateInTimeZone = new Date(
+    date.toLocaleString('en-US', { timeZone: timeZone })
+  );
+  return dateInTimeZone;
+}
+
+/**
+ * Gets the available time blocks or shifts for a reservation, considering 'uurOpVoorhand' and 'dagenInToekomst'.
+ * @param {Object} data - The main data object containing settings and meal information.
+ * @param {string} dateStr - The date string in "YYYY-MM-DD" format.
+ * @param {Array} reservations - An array of reservation objects.
+ * @param {number} guests - The number of guests for the reservation.
+ * @returns {Object} - Returns a pruned object of available time blocks or shifts, or an empty object if out of range.
+ */
+function getAvailableTimeblocks(data, dateStr, reservations, guests) {
+  // Get 'uurOpVoorhand' from general settings
+  let uurOpVoorhand = 4;
+  if (
+    data['general-settings'] &&
+    data['general-settings'].uurOpVoorhand &&
+    parseInt(data['general-settings'].uurOpVoorhand, 10) >= 0
+  ) {
+    uurOpVoorhand = parseInt(data['general-settings'].uurOpVoorhand, 10);
+  }
+
+  // Get 'dagenInToekomst' from general settings
+  let dagenInToekomst = 90; // Default if not defined
+  if (
+    data['general-settings'] &&
+    data['general-settings'].dagenInToekomst &&
+    parseInt(data['general-settings'].dagenInToekomst, 10) > 0
+  ) {
+    dagenInToekomst = parseInt(data['general-settings'].dagenInToekomst, 10);
+  }
+
+  // Time zone for CEST/CET (Europe/Amsterdam)
+  const timeZone = 'Europe/Amsterdam';
+
+  // Current date/time in CEST
+  const now = new Date();
+  const currentTimeInTimeZone = new Date(
+    now.toLocaleString('en-US', { timeZone: timeZone })
+  );
+
+  // Calculate the maximum allowed date
+  const maxAllowedDate = new Date(currentTimeInTimeZone.getTime());
+  maxAllowedDate.setDate(maxAllowedDate.getDate() + dagenInToekomst);
+  maxAllowedDate.setHours(23, 59, 59, 999);
+
+  // Parse the target date in the specified time zone
+  const [year, month, day] = dateStr.split('-').map(Number);
+  const targetDate = new Date(Date.UTC(year, month - 1, day));
+  const targetDateInTimeZone = new Date(
+    targetDate.toLocaleString('en-US', { timeZone: timeZone })
+  );
+
+  // Check if targetDateInTimeZone is within dagenInToekomst
+  if (targetDateInTimeZone > maxAllowedDate) {
+    // Out of allowed range, return empty object
+    return {};
+  }
+
+  // Check if the target date is today in the specified time zone
+  const isToday =
+    currentTimeInTimeZone.toDateString() === targetDateInTimeZone.toDateString();
+
+  // Get available time blocks or shifts
+  const availableTimeblocks = timeblocksAvailable(data, dateStr, reservations, guests);
+
+  // If the date is today and uurOpVoorhand is greater than zero, prune time blocks
+  if (isToday && uurOpVoorhand >= 0) {
+    const cutoffTime = new Date(currentTimeInTimeZone.getTime());
+    cutoffTime.setHours(cutoffTime.getHours() + uurOpVoorhand);
+
+    for (const [key, value] of Object.entries(availableTimeblocks)) {
+      let timeStr = key;
+
+      const timeBlockDateTime = parseDateTimeInTimeZone(dateStr, timeStr, timeZone);
+
+      if (timeBlockDateTime < cutoffTime) {
+        delete availableTimeblocks[key];
+      }
+    }
+  }
+
+  return availableTimeblocks;
+}
+
+module.exports = {
+  getAvailableTimeblocks,
+};
+
+
+--- StepOne/algorithm/isDateAvailable.js ---
+// isDateAvailable.js
+
+const { getAvailableTimeblocks } = require('./getAvailableTimeblocks');
+
+/**
+ * Parses a time string in "HH:MM" format into minutes since midnight.
+ * @param {string} timeStr - Time string in "HH:MM" format.
+ * @returns {number} Minutes since midnight.
+ */
+function parseTime(timeStr) {
+  const [hours, minutes] = timeStr.split(':').map(Number);
+  return hours * 60 + minutes;
+}
+
+/**
+ * Checks if a date is within the allowed future range defined by dagenInToekomst.
+ * @param {Object} data - The main data object (to access general settings).
+ * @param {string} dateStr - The date string (YYYY-MM-DD).
+ * @returns {boolean} true if within range, false otherwise.
+ */
+function isDateWithinAllowedRange(data, dateStr) {
+  // Get dagenInToekomst
+  let dagenInToekomst = 90;
+  if (
+    data['general-settings'] &&
+    data['general-settings'].dagenInToekomst &&
+    parseInt(data['general-settings'].dagenInToekomst, 10) > 0
+  ) {
+    dagenInToekomst = parseInt(data['general-settings'].dagenInToekomst, 10);
+  }
+
+  const timeZone = 'Europe/Amsterdam';
+
+  const now = new Date();
+  const currentTimeInTimeZone = new Date(
+    now.toLocaleString('en-US', { timeZone: timeZone })
+  );
+
+  const maxAllowedDate = new Date(currentTimeInTimeZone.getTime());
+  maxAllowedDate.setDate(maxAllowedDate.getDate() + dagenInToekomst);
+  maxAllowedDate.setHours(23, 59, 59, 999);
+
+  const [year, month, day] = dateStr.split('-').map(Number);
+  const targetDate = new Date(Date.UTC(year, month - 1, day));
+  const targetDateInTimeZone = new Date(
+    targetDate.toLocaleString('en-US', { timeZone: timeZone })
+  );
+
+  return targetDateInTimeZone <= maxAllowedDate;
+}
+
+/**
+ * Checks if a date is available for a reservation of a specified number of guests.
+ * This updated version uses `getAvailableTimeblocks` to ensure that it never returns
+ * true if no actual time slots are available, including for today's date.
+ * @param {Object} data - The main data object containing settings and meal information.
+ * @param {string} dateStr - The date string in "YYYY-MM-DD" format.
+ * @param {Array} reservations - An array of reservation objects.
+ * @param {number} guests - The number of guests for the reservation.
+ * @returns {boolean} - Returns true if the date has at least one available timeblock, false otherwise.
+ */
+function isDateAvailable(data, dateStr, reservations, guests) {
+  // Check if date is within allowed range
+  if (!isDateWithinAllowedRange(data, dateStr)) {
+    return false;
+  }
+
+  // Get available timeblocks using the existing logic
+  const availableTimeblocks = getAvailableTimeblocks(data, dateStr, reservations, guests);
+
+  // Return true only if we have at least one available timeblock
+  return Object.keys(availableTimeblocks).length > 0;
+}
+
+module.exports = {
+  isDateAvailable,
+};
+
+
+--- StepOne/algorithm/processing/dailyGuestCounts.js ---
+// dailyGuestCounts.js
+
+const { getGuestCountsForMeal } = require('./mealTypeCount');
+
+/**
+ * Calculates guest counts for breakfast, lunch, and dinner, and combines the results into a flat object.
+ * If time slots overlap, the available seats from the latest meal (dinner > lunch > breakfast) are used.
+ * @param {Object} data - The main data object.
+ * @param {string} dateStr - The date string (YYYY-MM-DD).
+ * @param {Array} reservations - An array of reservation objects.
+ * @returns {Object} An object containing combined guest counts for all meals with time slots as keys,
+ *                   and an array of shiftsInfo containing shift details.
+ */
+function getDailyGuestCounts(data, dateStr, reservations) {
+  // Define meal types in order of priority (lowest to highest)
+  const mealTypes = ['breakfast', 'lunch', 'dinner'];
+  const combinedGuestCounts = {};
+  const shiftsInfo = [];
+  const mealPriority = {
+    'breakfast': 1,
+    'lunch': 2,
+    'dinner': 3
+  };
+
+  for (const mealType of mealTypes) {
+    const result = getGuestCountsForMeal(data, dateStr, mealType, reservations);
+    if (result) {
+      const { guestCounts, shiftsInfo: mealShiftsInfo } = result;
+
+      // Merge guestCounts into combinedGuestCounts
+      for (const [time, availableSeats] of Object.entries(guestCounts)) {
+        if (combinedGuestCounts.hasOwnProperty(time)) {
+          // Compare meal priorities
+          const existingMealPriority = combinedGuestCounts[time].mealPriority;
+          const currentMealPriority = mealPriority[mealType];
+
+          if (currentMealPriority >= existingMealPriority) {
+            // Update with the current meal's available seats and priority
+            combinedGuestCounts[time] = {
+              availableSeats,
+              mealPriority: currentMealPriority
+            };
+          }
+          // Else, keep the existing value
+        } else {
+          // Add new time slot with available seats and meal priority
+          combinedGuestCounts[time] = {
+            availableSeats,
+            mealPriority: mealPriority[mealType]
+          };
+        }
+      }
+
+      // Merge shiftsInfo
+      if (mealShiftsInfo && mealShiftsInfo.length > 0) {
+        shiftsInfo.push(...mealShiftsInfo);
+      }
+    }
+    // Else do nothing if the meal is not available
+  }
+
+  // Extract only the availableSeats for the final output
+  const finalGuestCounts = {};
+  for (const [time, data] of Object.entries(combinedGuestCounts)) {
+    finalGuestCounts[time] = data.availableSeats;
+  }
+
+  return { guestCounts: finalGuestCounts, shiftsInfo };
+}
+
+module.exports = {
+  getDailyGuestCounts,
+};
+
+
+--- StepOne/algorithm/processing/mealTypeCount.js ---
+// mealTypeCount.js
+
+const { getDataByDateAndMealWithExceptions } = require('../restaurant_data/exceptions');
+const { parseTime } = require('../restaurant_data/openinghours');
+const { getGuestCountAtHour } = require('../reservation_data/counter');
+
+function getInterval(data) {
+  let intervalReservatie = 15;
+  if (
+    data['general-settings'] &&
+    data['general-settings'].intervalReservatie &&
+    parseInt(data['general-settings'].intervalReservatie, 10) > 0
+  ) {
+    intervalReservatie = parseInt(data['general-settings'].intervalReservatie, 10);
+  }
+  return intervalReservatie;
+}
+
+/**
+ * Retrieves meal types with shifts enabled and at least one shift defined for the specified date.
+ * @param {Object} data - The main data object.
+ * @param {string} dateStr - The date string (YYYY-MM-DD).
+ * @returns {Array} - An array of meal types with shifts.
+ */
+function getMealTypesWithShifts(data, dateStr) {
+  const mealTypes = ['breakfast', 'lunch', 'dinner'];
+  const mealTypesWithShifts = [];
+
+  for (const mealType of mealTypes) {
+    const mealData = getDataByDateAndMealWithExceptions(data, dateStr, mealType);
+    if (
+      mealData &&
+      mealData.shiftsEnabled &&
+      Array.isArray(mealData.shifts) &&
+      mealData.shifts.length > 0
+    ) {
+      mealTypesWithShifts.push(mealType);
+    }
+  }
+
+  return mealTypesWithShifts;
+}
+
+function shouldIncludeEndTime(mealType, endTime) {  
+  if ((mealType === 'breakfast' && endTime === '11:00') ||
+      (mealType === 'lunch' && endTime === '16:00')) {
+    return false; // Do not include endTime for breakfast at 11:00 and lunch at 16:00
+  }
+  return true; // Include endTime for all other cases
+}
+
+/**
+ * Calculates guest counts for each interval during a meal period or at shift times.
+ * @param {Object} data - The main data object.
+ * @param {string} dateStr - The date string (YYYY-MM-DD).
+ * @param {string} mealType - The meal type ("breakfast", "lunch", "dinner").
+ * @param {Array} reservations - An array of reservation objects.
+ * @returns {Object|null} An object mapping times to guest counts, or null if meal is not available.
+ */
+function getGuestCountsForMeal(data, dateStr, mealType, reservations) {
+  const mealData = getDataByDateAndMealWithExceptions(data, dateStr, mealType);
+  if (!mealData) {
+    return null;
+  }
+
+  const guestCounts = {};
+  const shiftsInfo = [];
+
+  // Get 'intervalReservatie' from general settings, default to 15 if not set or zero
+  let intervalReservatie = getInterval(data);
+
+  // Check if shifts are enabled and shifts array has valid content
+  if (
+    mealData.shiftsEnabled &&
+    Array.isArray(mealData.shifts) &&
+    mealData.shifts.length > 0
+  ) {
+    // If shifts are enabled and valid, calculate guest counts at shift times
+    const shifts = mealData.shifts; // Array of shifts
+
+    for (const shift of shifts) {
+      const timeStr = shift.time; // Time of the shift in "HH:MM" format
+
+      // Get guest count at this time
+      const guestCount = getGuestCountAtHour(data, reservations, timeStr, dateStr);
+
+      // Store in guestCounts
+      guestCounts[timeStr] = mealData.maxCapacity - guestCount;
+
+      // Store shift information
+      shiftsInfo.push({
+        mealType,
+        shiftName: shift.name,
+        time: timeStr,
+        availableSeats: mealData.maxCapacity - guestCount,
+      });
+    }
+  } else {
+    // If shifts are not enabled or shifts array is empty/invalid, calculate guest counts at intervals
+    const startTime = mealData.startTime;
+    const endTime = mealData.endTime;
+
+    // Determine if endTime should be included
+    const includeEndTime = shouldIncludeEndTime(mealType, endTime);
+
+    // Convert startTime and endTime to minutes since midnight
+    let currentTime = parseTime(startTime);
+    const endTimeMinutes = parseTime(endTime);
+
+    while (includeEndTime ? currentTime <= endTimeMinutes : currentTime < endTimeMinutes) {
+      // Convert currentTime back to "HH:MM" format
+      const hours = Math.floor(currentTime / 60).toString().padStart(2, '0');
+      const minutes = (currentTime % 60).toString().padStart(2, '0');
+      const timeStr = `${hours}:${minutes}`;
+
+      // Get guest count at this time
+      const guestCount = getGuestCountAtHour(data, reservations, timeStr, dateStr);
+
+      // Store in guestCounts
+      guestCounts[timeStr] = mealData.maxCapacity - guestCount;
+
+      // Increment currentTime by 'intervalReservatie' minutes
+      currentTime += intervalReservatie;
+    }
+  }
+
+  return { guestCounts, shiftsInfo };
+}
+
+module.exports = {
+  getGuestCountsForMeal,
+  getMealTypesWithShifts, // Exported
+};
+
+
+--- StepOne/algorithm/processing/timeblocksAvailable.js ---
+const { getDailyGuestCounts } = require('./dailyGuestCounts');
+const { getMealTypesWithShifts } = require('./mealTypeCount');
+const { getDataByDateAndMealWithExceptions } = require('../restaurant_data/exceptions');
+const { getMealTypeByTime, parseTime: parseTimeOH } = require('../restaurant_data/openinghours');
+
+/**
+ * Parses a time string in "HH:MM" format into minutes since midnight.
+ */
+function parseTime(timeStr) {
+  const [hours, minutes] = timeStr.split(':').map(Number);
+  return hours * 60 + minutes;
+}
+
+/**
+ * Retrieves interval and duurReservatie from general settings
+ */
+function getInterval(data) {
+  let intervalReservatie = 15;
+  if (
+    data['general-settings'] &&
+    data['general-settings'].intervalReservatie &&
+    parseInt(data['general-settings'].intervalReservatie, 10) > 0
+  ) {
+    intervalReservatie = parseInt(data['general-settings'].intervalReservatie, 10);
+  }
+  return intervalReservatie;
+}
+
+function getDuurReservatie(data) {
+  let duurReservatie = 120;
+  if (
+    data['general-settings'] &&
+    data['general-settings'].duurReservatie &&
+    parseInt(data['general-settings'].duurReservatie, 10) > 0
+  ) {
+    duurReservatie = parseInt(data['general-settings'].duurReservatie, 10);
+  }
+  return duurReservatie;
+}
+
+/**
+ * Determines if a given start time plus duurReservatie fits within the meal timeframe.
+ */
+function fitsWithinMeal(data, dateStr, startTimeStr, duurReservatie) {
+  // Determine the meal type based on the start time
+  const mealType = getMealTypeByTime(startTimeStr);
+  if (!mealType) return false;
+
+  // Get the meal data (with exceptions applied)
+  const mealData = getDataByDateAndMealWithExceptions(data, dateStr, mealType);
+  if (!mealData) return false;
+
+  const mealEndTime = parseTime(mealData.endTime);
+  const startTime = parseTime(startTimeStr);
+  
+  // Check if startTime + duurReservatie is within the mealEndTime
+  return startTime + duurReservatie <= mealEndTime;
+}
+
+function timeblocksAvailable(data, dateStr, reservations, guests) {
+  const duurReservatie = getDuurReservatie(data);
+  const intervalReservatie = getInterval(data);
+
+  // Slots needed
+  const slotsNeeded = Math.ceil(duurReservatie / intervalReservatie);
+
+  // Get guest counts and shifts info
+  const { guestCounts, shiftsInfo } = getDailyGuestCounts(data, dateStr, reservations);
+
+  const availableTimeblocks = {};
+
+  // Handle shifts first
+  const mealTypesWithShifts = getMealTypesWithShifts(data, dateStr);
+  if (mealTypesWithShifts.length > 0 && shiftsInfo && shiftsInfo.length > 0) {
+    for (const shift of shiftsInfo) {
+      const { time, availableSeats } = shift;
+      if (availableSeats >= guests && fitsWithinMeal(data, dateStr, time, duurReservatie)) {
+        availableTimeblocks[time] = { name: time };
+      }
+    }
+  }
+
+  // Handle non-shift times
+  if (guestCounts && Object.keys(guestCounts).length > 0) {
+    const timeSlots = Object.keys(guestCounts).sort((a, b) => parseTime(a) - parseTime(b));
+
+    for (let i = 0; i <= timeSlots.length - slotsNeeded; i++) {
+      // Check capacity for all needed slots
+      let consecutiveSlotsAvailable = true;
+      if (guestCounts[timeSlots[i]] < guests) {
+        continue;
+      }
+
+      let previousTime = parseTime(timeSlots[i]);
+      for (let j = 1; j < slotsNeeded; j++) {
+        const currentTimeSlot = timeSlots[i + j];
+        const currentTime = parseTime(currentTimeSlot);
+
+        // Check interval and capacity
+        if ((currentTime - previousTime) !== intervalReservatie || guestCounts[currentTimeSlot] < guests) {
+          consecutiveSlotsAvailable = false;
+          break;
+        }
+        previousTime = currentTime;
+      }
+
+      // If all consecutive slots are available, check if the full duration fits
+      if (consecutiveSlotsAvailable && fitsWithinMeal(data, dateStr, timeSlots[i], duurReservatie)) {
+        availableTimeblocks[timeSlots[i]] = { name: timeSlots[i] };
+      }
+    }
+  }
+
+  return availableTimeblocks;
+}
+
+module.exports = {
+  timeblocksAvailable,
+};
+
+
+--- StepOne/algorithm/reservation_data/counter.js ---
+// counter.js
+
+/**
+ * Parses a time string in "HH:MM" format into minutes since midnight.
+ * @param {string} timeStr - The time string in "HH:MM" format.
+ * @returns {number} The time in minutes since midnight.
+ */
+function parseTime(timeStr) {
+	const [hours, minutes] = timeStr.split(':').map(Number);
+	return hours * 60 + minutes;
+  }
+
+  function getDuurReservatie(data) {
+	let duurReservatie = 120;
+	if (
+	  data['general-settings'] &&
+	  data['general-settings'].duurReservatie &&
+	  parseInt(data['general-settings'].duurReservatie, 10) > 0
+	) {
+	  duurReservatie = parseInt(data['general-settings'].duurReservatie, 10);
+	}
+
+	return duurReservatie;
+  }
+  
+  /**
+   * Calculates the total number of guests for reservations that cover a specific hour on a specific date.
+   * @param {Object} data - The main data object containing general settings.
+   * @param {Array} reservations - An array of reservation objects.
+   * @param {string} hour - The hour to check in "HH:MM" format.
+   * @param {string} dateStr - The date string in "YYYY-MM-DD" format.
+   * @returns {number} The total number of guests for that hour on the specified date.
+   */
+  function getGuestCountAtHour(data, reservations, hour, dateStr) {
+	// Get 'duurReservatie' from general settings, default to 120 if not set or zero
+	let duurReservatie = getDuurReservatie(data)
+  
+	// Convert the target hour to minutes since midnight
+	const targetTime = parseTime(hour);
+  
+	let totalGuests = 0;
+  
+	for (const reservation of reservations) {
+	  // Only consider reservations on the specified date
+	  if (reservation.date !== dateStr) {
+		continue;
+	  }
+  
+	  const startTime = parseTime(reservation.time);
+
+	  const endTime = startTime + duurReservatie; // Use 'duurReservatie' from general settings
+  	  // Check if the target time is within the reservation time range
+	  // Start time is inclusive, end time is exclusive
+	  if (targetTime >= startTime && targetTime < endTime) {
+		totalGuests += parseInt(reservation.guests, 10);
+	  }
+	}
+  
+	return totalGuests;
+  }
+  
+  module.exports = {
+	getGuestCountAtHour,
+  };
+  
+
+--- StepOne/algorithm/restaurant_data/exceptions.js ---
+// exceptions.js
+
+const {
+	getDataByDateAndMeal,
+	getDataByDateAndTime,
+	getMealTypeByTime,
+	parseTime,
+	shifts,
+	daysOfWeekEnglish,
+	daysOfWeekDutch,
+} = require('./openinghours');
+
+function isDateInRange(dateStr, startDateStr, endDateStr) {
+	const date = new Date(dateStr);
+	const startDate = new Date(startDateStr);
+	const endDate = new Date(endDateStr);
+	if (isNaN(date) || isNaN(startDate) || isNaN(endDate)) {
+	  return false;
+	}
+	return date >= startDate && date <= endDate;
+}
+
+function getDutchDayOfWeek(date) {
+	const dayIndex = date.getDay();
+	return daysOfWeekDutch[dayIndex];
+}
+
+function doesExceptionApply(exception, dateStr, dateDayOfWeekDutch, mealType) {
+	const { timeframe, startDate, endDate, daysOfWeek } = exception;
+
+	if (!isDateInRange(dateStr, startDate, endDate)) {
+	  return false;
+	}
+
+	if (Array.isArray(daysOfWeek) && daysOfWeek.length > 0) {
+	  const daysOfWeekLower = daysOfWeek.map(day => day.toLowerCase());
+	  if (!daysOfWeekLower.includes(dateDayOfWeekDutch)) {
+		return false;
+	  }
+	}
+
+	if (timeframe === 'Volledige Dag' || timeframe === mealType) {
+	  return true;
+	}
+
+	return false;
+}
+
+function getDuurReservatie(data) {
+  let duurReservatie = 120;
+  if (
+    data['general-settings'] &&
+    data['general-settings'].duurReservatie &&
+    parseInt(data['general-settings'].duurReservatie, 10) > 0
+  ) {
+    duurReservatie = parseInt(data['general-settings'].duurReservatie, 10);
+  }
+  return duurReservatie;
+}
+
+function addDuurReservatieToEndTime(mealData, data) {
+  const duurReservatie = getDuurReservatie(data);
+  const endMinutes = parseTime(mealData.endTime);
+  const newEndMinutes = endMinutes + duurReservatie;
+  const hours = String(Math.floor(newEndMinutes / 60)).padStart(2, '0');
+  const minutes = String(newEndMinutes % 60).padStart(2, '0');
+  mealData.endTime = `${hours}:${minutes}`;
+}
+
+function mapExceptionToMealData(exception, data) {
+	let mealData = {
+	  enabled: true,
+	  startTime: exception.startHour,
+	  endTime: exception.endHour,
+	  maxCapacityEnabled: exception.maxSeats ? true : false,
+	  maxCapacity: exception.maxSeats || null,
+	  shiftsEnabled: false,
+	  shifts: [],
+	};
+
+	// Add duurReservatie to endTime
+	addDuurReservatieToEndTime(mealData, data);
+
+	return mealData;
+}
+
+function getDataByDateAndMealWithExceptions(data, dateStr, mealType) {
+	const exceptions = data.exceptions || [];
+	const date = new Date(dateStr);
+	if (isNaN(date)) {
+	  return null;
+	}
+	const dateDayOfWeekDutch = getDutchDayOfWeek(date).toLowerCase();
+
+	const exceptionTypesPriority = ['Opening', 'Sluiting', 'Uitzondering'];
+
+	for (const exceptionType of exceptionTypesPriority) {
+	  for (const exception of exceptions) {
+		if (exception.type === exceptionType) {
+		  if (doesExceptionApply(exception, dateStr, dateDayOfWeekDutch, mealType)) {
+			if (exceptionType === 'Sluiting') {
+			  return null;
+			} else {
+			  return mapExceptionToMealData(exception, data);
+			}
+		  }
+		}
+	  }
+	}
+
+	return getDataByDateAndMeal(data, dateStr, mealType);
+}
+
+function shouldIncludeEndTime(mealType, endTime) {
+	if ((mealType === 'breakfast' && endTime === '11:00') ||
+		(mealType === 'lunch' && endTime === '16:00')) {
+	  return false;
+	}
+	return true;
+}
+
+function getDataByDateAndTimeWithExceptions(data, dateStr, timeStr) {
+	const mealType = getMealTypeByTime(timeStr);
+	if (!mealType) {
+	  return null;
+	}
+	const mealData = getDataByDateAndMealWithExceptions(data, dateStr, mealType);
+	if (!mealData) {
+	  return null;
+	}
+
+	const requestedTime = parseTime(timeStr);
+	const startTime = parseTime(mealData.startTime);
+	const endTime = parseTime(mealData.endTime);
+
+	const includeEndTime = shouldIncludeEndTime(mealType, mealData.endTime);
+
+	const timeFallsWithin =
+	  includeEndTime
+		? requestedTime >= startTime && requestedTime <= endTime
+		: requestedTime >= startTime && requestedTime < endTime;
+
+	return timeFallsWithin ? mealData : null;
+}
+
+module.exports = {
+	getDataByDateAndMealWithExceptions,
+	getDataByDateAndTimeWithExceptions,
+};
+
+
+--- StepOne/algorithm/restaurant_data/openinghours.js ---
+// index.js
+
+const daysOfWeekEnglish = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const daysOfWeekDutch = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag'];
+
+const shifts = {
+  breakfast: { start: '07:00', end: '11:00' },
+  lunch: { start: '11:00', end: '16:00' },
+  dinner: { start: '16:00', end: '23:00' },
+};
+
+function parseTime(timeStr) {
+  const [hours, minutes] = timeStr.split(':').map(Number);
+  return hours * 60 + minutes;
+}
+
+function getMealTypeByTime(timeStr) {
+  const time = parseTime(timeStr);
+  for (const [mealType, shift] of Object.entries(shifts)) {
+    const start = parseTime(shift.start);
+    const end = parseTime(shift.end);
+    if (time >= start && time < end) {
+      return mealType;
+    }
+  }
+  return null;
+}
+
+function getDataByDayAndMeal(data, dayOfWeek, mealType) {
+  const mealKey = `openinghours-${mealType}`;
+  if (!data[mealKey]) {
+    return null;
+  }
+  const mealData = data[mealKey];
+  const dayData = mealData.schemeSettings[dayOfWeek];
+  if (!dayData) {
+    return null;
+  }
+  return { ...dayData };
+}
+
+function adjustMealData(mealData, generalSettings) {
+  if (mealData.maxCapacityEnabled === false) {
+    if (generalSettings && generalSettings.zitplaatsen) {
+      mealData.maxCapacity = generalSettings.zitplaatsen;
+      mealData.maxCapacityEnabled = true;
+    } else {
+      mealData.maxCapacity = '0';
+      mealData.maxCapacityEnabled = true;
+    }
+  }
+}
+
+function getDuurReservatie(data) {
+  let duurReservatie = 120;
+  if (
+    data['general-settings'] &&
+    data['general-settings'].duurReservatie &&
+    parseInt(data['general-settings'].duurReservatie, 10) > 0
+  ) {
+    duurReservatie = parseInt(data['general-settings'].duurReservatie, 10);
+  }
+  return duurReservatie;
+}
+
+function addDuurReservatieToEndTime(mealData, data) {
+  const duurReservatie = getDuurReservatie(data);
+  const endMinutes = parseTime(mealData.endTime);
+  const newEndMinutes = endMinutes + duurReservatie;
+  const hours = String(Math.floor(newEndMinutes / 60)).padStart(2, '0');
+  const minutes = String(newEndMinutes % 60).padStart(2, '0');
+  mealData.endTime = `${hours}:${minutes}`;
+}
+
+function getDataByDateAndMeal(data, dateStr, mealType) {
+  const date = new Date(dateStr);
+  if (isNaN(date)) {
+    return null;
+  }
+  const dayOfWeekIndex = date.getDay();
+  const dayOfWeek = daysOfWeekEnglish[dayOfWeekIndex];
+  let mealData = getDataByDayAndMeal(data, dayOfWeek, mealType);
+  if (!mealData || mealData.enabled !== true) {
+    return null;
+  }
+
+  adjustMealData(mealData, data['general-settings']);
+
+  // Add duurReservatie to endTime
+  addDuurReservatieToEndTime(mealData, data);
+
+  return mealData;
+}
+
+function getDataByDateAndTime(data, dateStr, timeStr) {
+  const mealType = getMealTypeByTime(timeStr);
+  if (!mealType) {
+    return null;
+  }
+  const mealData = getDataByDateAndMeal(data, dateStr, mealType);
+  if (!mealData) {
+    return null;
+  }
+  const requestedTime = parseTime(timeStr);
+  const startTime = parseTime(mealData.startTime);
+  const endTime = parseTime(mealData.endTime);
+  if (requestedTime >= startTime && requestedTime < endTime) {
+    return mealData;
+  } else {
+    return null;
+  }
+}
+
+module.exports = {
+  getDataByDayAndMeal,
+  getDataByDateAndMeal,
+  getDataByDateAndTime,
+  daysOfWeekEnglish,
+  daysOfWeekDutch,
+  getMealTypeByTime,
+  parseTime,
+  shifts,
+};
+
+
+--- StepOne/index.js ---
+import React, { useState, useEffect } from 'react';
+import ValueSelectorGuests from './ValueSelector';
+import DateSelector from './DateSelector';
+import TimeSelector from './TimeSelector';
+import './css/reservationMode.css'; // Import CSS for reservation mode
+import moment from 'moment';
+import useApi from '../../../Hooks/useApi'; // Import useApi
+import { isWeekInPast } from './Utils/dateUtils';
+
+const ReservationStepOne = ({
+  formData,
+  errors,
+  handleChange,
+  handleStepOneSubmit,
+  setFormData,
+  timeblocks,
+  loadingTimeblocks,
+  timeblocksError,
+  restaurantData,
+}) => {
+  const [guests, setGuests] = useState(1);
+  const [startDate, setStartDate] = useState(null); // startDate state
+  const [reservations, setReservations] = useState([]); // reservations state
+  const api = useApi(); // Initialize useApi hook
+
+  const resetFormDataFields = (fieldsToReset) => {
+    setFormData((prevFormData) => {
+      const newFormData = { ...prevFormData };
+      fieldsToReset.forEach((field) => {
+        newFormData[field] = '';
+      });
+      return newFormData;
+    });
+  };
+
+  // Initialize startDate
+  useEffect(() => {
+    const today = moment().tz('Europe/Amsterdam').startOf('day');
+    let firstWeekStart = today.clone().startOf('isoWeek');
+    while (isWeekInPast(firstWeekStart)) {
+      firstWeekStart.add(1, 'week');
+    }
+    setStartDate(firstWeekStart);
+  }, []);
+
+  // Fetch reservations when startDate changes
+  useEffect(() => {
+    const fetchReservations = async () => {
+      if (startDate) {
+        const beginDate = startDate.format('YYYY-MM-DD');
+        const endDate = startDate.clone().add(13, 'days').format('YYYY-MM-DD');
+        const restaurantId = localStorage.getItem('username');
+        const endpoint = `${window.baseDomain}api/slots/${restaurantId}/${beginDate}/${endDate}`;
+
+        try {
+          console.log('Calendar Slots GET');
+          const data = await api.get(endpoint, { noCache: true });
+          setReservations(data); // Update reservations state
+          console.log('Fetched reservations:', data);
+        } catch (error) {
+          console.error('Error fetching reservations:', error);
+        }
+      }
+    };
+
+    fetchReservations();
+  }, [startDate, api]);
+
+  // Handler for week change
+  const handleWeekChange = (newStartDate) => {
+    setStartDate(newStartDate);
+  };
+
+  // Set default reservation mode to 'met_limieten' on component mount
+  useEffect(() => {
+    if (!formData.reservationMode) {
+      handleChange({
+        target: { name: 'reservationMode', value: 'met_limieten' },
+      });
+    }
+  }, [formData.reservationMode, handleChange]);
+
+  useEffect(() => {
+    resetFormDataFields(['date', 'time']);
+  }, [guests]);
+
+  if (timeblocksError) {
+    return (
+      <div>
+        <a
+          href="https://dashboard.reservaties.net/#/scheme"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: 'var(--color-blue)', textDecoration: 'underline' }}
+        >
+          Klik hier
+        </a>{' '}
+        om uw openingsuren in te stellen.
+      </div>
+    );
+  }
+
+  // Handler for reservation mode selection
+  const handleReservationModeSelect = (mode) => {
+    handleChange({
+      target: { name: 'reservationMode', value: mode },
+    });
+    // Reset date and time when reservation mode changes
+    resetFormDataFields(['date', 'time']);
+  };
+
+  return (
+    <form
+      className="account-manage-form"
+      onSubmit={handleStepOneSubmit}
+      noValidate
+    >
+      {/* Reservation Mode Selection */}
+      <div className="form-group reservation-mode">
+        <div className="reservation-mode-buttons">
+          <button
+            type="button"
+            className={`reservation-mode-button ${
+              formData.reservationMode === 'met_limieten' ? 'active' : ''
+            }`}
+            onClick={() => handleReservationModeSelect('met_limieten')}
+            aria-pressed={formData.reservationMode === 'met_limieten'}
+          >
+            Met Limieten
+          </button>
+          <button
+            type="button"
+            className={`reservation-mode-button ${
+              formData.reservationMode === 'zonder_regels' ? 'active' : ''
+            }`}
+            onClick={() => handleReservationModeSelect('zonder_regels')}
+            aria-pressed={formData.reservationMode === 'zonder_regels'}
+          >
+            Onbeperkt
+          </button>
+        </div>
+      </div>
+
+      <ValueSelectorGuests
+        setGuests={setGuests}
+        value={formData.guests}
+        onChange={handleChange}
+        error={errors.guests}
+      />
+
+      {formData.guests && (
+        <>
+          <DateSelector
+            guests={formData.guests}
+            formData={formData}
+            handleChange={handleChange}
+            resetFormDataFields={resetFormDataFields}
+            timeblocks={timeblocks}
+            restaurantData={restaurantData}
+            reservations={reservations} // Pass down reservations
+            startDate={startDate} // Pass down startDate
+            onWeekChange={handleWeekChange} // Pass down onWeekChange handler
+            reservationMode={formData.reservationMode} // Pass reservationMode
+          />
+        </>
+      )}
+
+      {formData.date && (
+        <>
+          <TimeSelector
+            guests={formData.guests}
+            formData={formData}
+            handleChange={handleChange}
+            field={{ id: 'time', label: 'Tijd' }}
+            selectedDate={formData.date}
+            setCurrentExpandedField={() => {}}
+            restaurantData={restaurantData}
+            reservations={reservations}
+            reservationMode={formData.reservationMode} // Pass reservationMode
+          />
+        </>
+      )}
+    </form>
+  );
+};
+
+export default ReservationStepOne;
+
+
+--- index.js ---
+// src/components/NewReservationAdmin.js
+
+import React, { useState } from 'react';
+import useApi from '../../Hooks/useApi';
+import ReservationSidebar from './ReservationSidebar';
+import { AiOutlinePlus } from 'react-icons/ai';
+
+import './css/newReservationAdmin.css';
+
+const NewReservationAdmin = () => {
+  const api = useApi();
+
+  const [formData, setFormData] = useState({
+    guests: '',
+    date: '',
+    time: '',
+    menu: '', // Existing
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    extraInfo: '',
+    personeel: '', // Add personeel field
+  });
+
+  const [errors, setErrors] = useState({});
+
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [reservationSubmitted, setReservationSubmitted] = useState(false);
+
+  const validateStepOne = () => {
+    const errors = {};
+    if (!formData.guests) {
+      errors.guests = 'Aantal gasten is verplicht';
+    }
+    if (!formData.date) {
+      errors.date = 'Datum is verplicht';
+    }
+    if (!formData.time) {
+      errors.time = 'Tijd is verplicht';
+    }
+    return errors;
+  };
+
+  const validateStepTwo = () => {
+    const errors = {};
+
+    if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
+      errors.email = 'E-mail is ongeldig';
+    }
+
+    // Optional: Validate personeel selection if necessary
+    // For example, require selecting personeel
+    // if (!formData.personeel) {
+    //   errors.personeel = 'Selecteer een personeel';
+    // }
+
+    return errors;
+  };
+
+  const handleFinalSubmit = async (e) => {
+    e.preventDefault();
+    const stepOneErrors = validateStepOne();
+    const stepTwoErrors = validateStepTwo();
+    const allErrors = { ...stepOneErrors, ...stepTwoErrors };
+    if (Object.keys(allErrors).length > 0) {
+      setErrors(allErrors);
+    } else {
+      setErrors({});
+      setIsSubmitting(true);
+      const submissionData = {
+        guests: formData.guests,
+        date: formData.date,
+        time: formData.time,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        extraInfo: formData.extraInfo,
+        menu: formData.menu,
+        personeel: formData.personeel, // Include personeel in submission
+      };
+
+      try {
+        await api.post(`${window.baseDomain}api/auth-reservations/`, submissionData);
+        setReservationSubmitted(true);
+      } catch (error) {
+        console.error('Error submitting reservation:', error);
+      } finally {
+        setIsSubmitting(false);
+      }
+    }
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+    setErrors({ ...errors, [name]: '' });
+  };
+
+  return (
+    <div className="new-reservation-page">
+      <button
+        className="open-sidebar-button"
+        onClick={() => setIsSidebarOpen(true)}
+        style={{ zIndex: isSidebarOpen ? 0 : 1000 }}
+      >
+        <AiOutlinePlus size={24} color="#fff" />
+      </button>
+      {/* Sidebar */}
+      <ReservationSidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        formData={formData}
+        errors={errors}
+        handleChange={handleChange}
+        handleFinalSubmit={handleFinalSubmit}
+        setFormData={setFormData}
+        isSubmitting={isSubmitting}
+        reservationSubmitted={reservationSubmitted}
+        onNewReservation={() => {
+          setFormData({
+            guests: '',
+            date: '',
+            time: '',
+            firstName: '',
+            lastName: '',
+            email: '',
+            phone: '',
+            extraInfo: '',
+            menu: '',
+            personeel: '', // Reset personeel selection
+          });
+          setReservationSubmitted(false);
+        }}
+      />
+    </div>
+  );
+};
+
+export default NewReservationAdmin;
+
+
+
+Directory Structure for "/Users/thibaultvandesompele/Desktop/Mateza 4.0/Client/Dashboard/dashboard-general/src/Pages/NewReservation":
+
+├── FormField.js
+├── ReservationSidebar.js
+├── ReservationStepTwo.js
+├── ReservationSummary.js
+├── StepOne
+│   ├── Calendar.js
+│   ├── DateSelector.js
+│   ├── TimeSelector.js
+│   ├── Utils
+│   │   ├── dateUtils.js
+│   │   ├── dates
+│   │   │   ├── blockDates.js
+│   │   │   └── schemeDates.js
+│   │   ├── exceptions.js
+│   │   ├── generateDates.js
+│   │   └── generateTimes.js
+│   ├── ValueSelector.js
+│   ├── algorithm
+│   │   ├── .DS_Store
+│   │   ├── getAvailableTimeblocks.js
+│   │   ├── isDateAvailable.js
+│   │   ├── processing
+│   │   │   ├── dailyGuestCounts.js
+│   │   │   ├── mealTypeCount.js
+│   │   │   └── timeblocksAvailable.js
+│   │   ├── reservation_data
+│   │   │   └── counter.js
+│   │   └── restaurant_data
+│   │       ├── exceptions.js
+│   │       └── openinghours.js
+│   ├── css
+│   │   ├── calendar.css
+│   │   ├── reservationMode.css
+│   │   ├── timeSelector.css
+│   │   └── valueSelector.css
+│   └── index.js
+├── css
+│   ├── newReservationAdmin.css
+│   ├── reservationSidebar.css
+│   ├── reservationSummary.css
+│   └── reservationsStepTwo.css
+└── index.js
+
+
+List of Files:
+FormField.js
+ReservationSidebar.js
+ReservationStepTwo.js
+ReservationSummary.js
+StepOne/Calendar.js
+StepOne/DateSelector.js
+StepOne/TimeSelector.js
+StepOne/Utils/dateUtils.js
+StepOne/Utils/dates/blockDates.js
+StepOne/Utils/dates/schemeDates.js
+StepOne/Utils/exceptions.js
+StepOne/Utils/generateDates.js
+StepOne/Utils/generateTimes.js
+StepOne/ValueSelector.js
+StepOne/algorithm/.DS_Store
+StepOne/algorithm/getAvailableTimeblocks.js
+StepOne/algorithm/isDateAvailable.js
+StepOne/algorithm/processing/dailyGuestCounts.js
+StepOne/algorithm/processing/mealTypeCount.js
+StepOne/algorithm/processing/timeblocksAvailable.js
+StepOne/algorithm/reservation_data/counter.js
+StepOne/algorithm/restaurant_data/exceptions.js
+StepOne/algorithm/restaurant_data/openinghours.js
+StepOne/index.js
+index.js
+
+Starting from this code, add a red button in top right corner.

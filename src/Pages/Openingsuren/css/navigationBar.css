@@ -1,0 +1,71 @@
+.schedule-page-component .schedule-page .navigation-container {
+	display: flex;
+	width: 100%;
+	position: relative;
+}
+  
+.schedule-page-component .schedule-page .navigation-item {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	cursor: pointer;
+	position: relative;
+	padding: 10px 0;
+	overflow: hidden;
+	background-color: transparent;
+	transition: transform 0.3s;
+}
+  
+.schedule-page-component .schedule-page .navigation-item.selected {
+	z-index: 2;
+}
+  
+.schedule-page-component .schedule-page .navigation-item .icon {
+	font-size: 24px;
+	color: #000;
+	z-index: 1;
+}
+  
+.schedule-page-component .schedule-page .navigation-item .label {
+	font-size: 13px;
+	margin-top: 5px;
+	color: #000;
+	z-index: 1;
+}
+  
+.schedule-page-component .schedule-page .navigation-item .border-right {
+	position: absolute;
+	right: 0;
+	top: 20%;
+	bottom: 20%;
+	width: 1px;
+	background-color: #ccc;
+	z-index: 0;
+}
+  
+.schedule-page-component .schedule-page .navigation-item .selected-day-background {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #fff;
+	z-index: 0;
+	border-radius: 8px;
+}
+  
+.schedule-page-component .schedule-page .navigation-item:hover .icon,
+.schedule-page-component .schedule-page .navigation-item:hover .label {
+	color: var(--color-blue);
+}
+  
+.schedule-page-component .schedule-page .navigation-item:hover {
+	transform: scale(1.05);
+}
+  
+.schedule-page-component .schedule-page .navigation-item.selected .icon,
+.schedule-page-component .schedule-page .navigation-item.selected .label {
+	color: var(--color-blue);
+}
+

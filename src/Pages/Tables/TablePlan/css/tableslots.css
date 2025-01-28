@@ -1,0 +1,70 @@
+.table-display-component .tableslot-timeline-container {
+	position: relative;
+	overflow-x: auto;
+	white-space: nowrap;
+	margin: 20px 0;
+	padding: 0 10px;
+	height: 80px;
+	-ms-overflow-style: none;  /* Internet Explorer 10+ */
+	scrollbar-width: none;  /* Firefox */
+  }
+  
+  .table-display-component .tableslot-timeline-container::-webkit-scrollbar {
+	display: none;  /* Safari and Chrome */
+  }
+  
+  .table-display-component .tableslot-timeline {
+	display: inline-block;
+  }
+  
+  
+  .table-display-component .tableslot-timeline-slot {
+	display: inline-block;
+	width: 100px;
+	height: 70px;
+	background-color: #f8f9fa;
+	border-radius: 12px;
+	margin: 0 10px;
+	transition: transform 0.3s ease, background-color 0.3s ease, width 0.3s ease, height 0.3s ease;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	cursor: pointer;
+	text-align: center;
+	vertical-align: middle;
+	margin-top: 5px;
+	user-select: none;
+	line-height: 70px; /* Center text vertically */
+  }
+  
+  .table-display-component .tableslot-timeline-slot:hover {
+	background-color: #e9ecef;
+  }
+  
+  .table-display-component .tableslot-timeline-slot.selected {
+	background-color: #0073e6;
+	color: white;
+	border: 1px solid #005bb5;
+	width: 150px; /* Expanded width */
+	line-height: normal; /* Reset line-height */
+  }
+  
+  .table-display-component .tableslot-slot-content {
+	text-align: center;
+  }
+  
+  .table-display-component .tableslot-slot-title {
+	font-size: 18px;
+	font-weight: bold;
+	line-height: normal; /* Reset line-height */
+  }
+  
+  .table-display-component .tableslot-slot-subtitle {
+	font-size: 14px;
+	margin-top: 14px;
+	color: #6c757d;
+	line-height: normal; /* Reset line-height */
+  }
+  
+  .table-display-component .tableslot-timeline-slot.selected .slot-subtitle {
+	color: white;
+  }
+  

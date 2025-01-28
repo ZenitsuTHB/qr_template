@@ -1,0 +1,78 @@
+:root {
+	--color-white: #fbfbfb;
+	--color-bg: #eaeaea;
+	--color-nav-selection: #f3f3f3;
+	--color-border: #a4a4a4;
+	--color-accent: #474747;
+	--color-accent-main: #474747;
+
+	--color-black: #000;
+	--color-modal-bg: rgba(0, 0, 0, 0.5);
+
+	--color-green: #59af48;
+	--color-orange: #af8d48;
+
+	--color-blue: var(--color-blue);
+	--color-blue: #48aaaf;
+	
+	--color-blue-transparant: #48aaaf4a;
+	--color-blue-block: #3e9498;
+
+	--color-blue-hover-accent: #0056b3;
+
+	--color-blue-hover: #0056b3;
+
+	--color-lightblue: #00bbff;
+
+	--color-cancel: #e4e4e4;
+	--color-cancel-hover: #d1d1d1;
+
+	--color-red: #d32f2f;
+	--color-red-hover: #a11c1c;
+
+	--color-green: #28a745;
+  }
+
+.blue {
+	background-color: var(--color-blue);
+	color: white;
+	transition: all 0.3s ease;
+	cursor: pointer;
+}
+
+.blue:hover {
+	background-color: var(--color-blue-hover);
+}
+
+.red {
+	background-color: var(--color-red);
+	color: white;
+	transition: all 0.3s ease;
+	cursor: pointer;
+}
+
+.red:hover {
+	background-color: var(--color-red-hover);
+}
+
+.cancel {
+	background-color: var(--color-cancel);
+	color: black;
+	transition: all 0.3s ease;
+	cursor: pointer;
+}
+
+.cancel:hover {
+	background-color: var(--color-cancel-hover);
+}
+
+input[type='color'] {
+	height: 50px;
+	outline: none;
+	border: none;
+	padding: 0;
+	width: 100%;
+	background-color: white;
+	border-color: transparent;
+	cursor: pointer;
+  }

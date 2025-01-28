@@ -1,0 +1,8 @@
+# Query: ../Pages/Dashboard/DayList/index
+# ContextLines: 1
+
+1 result - 1 file
+
+src\Config\sidebarConfig.js:
+  26  import Profile from '../Pages/Profile/index.js';
+  28  import GiftCard from '../Pages/Giftcard/GiftCard';

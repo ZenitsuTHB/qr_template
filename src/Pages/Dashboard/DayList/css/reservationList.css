@@ -1,0 +1,197 @@
+/* reservationList.css */
+.reservations-page .reservations-grid {
+	display: grid;
+	gap: 10px;
+  }
+  
+  .reservations-page .reservations-grid.mobile-grid {
+	display: flex;
+	flex-direction: column;
+  }
+  
+  .reservations-page .reservations-header {
+	display: contents;
+  }
+  
+  .reservations-page .reservations-header > div {
+	padding: 10px;
+	font-weight: bold;
+	color: #474747;
+  }
+  
+  .reservations-page .reservations-header > div.header-number {
+	width: 50px;
+  }
+  
+  .reservations-page .reservation-row > div.reservation-number {
+	width: 50px;
+  }
+  
+  .reservations-page .header-number,
+  .reservations-page .reservation-number {
+	display: flex;
+	align-items: center;
+  }
+  
+  .reservations-page {
+	position: relative;
+	padding: 0;
+  }
+  
+  .reservations-page .header-cell {
+	display: flex;
+	align-items: center;
+	position: relative;
+  }
+  
+  .reservations-page .sort-icon {
+	margin-left: 5px;
+	display: none;
+  }
+  
+  .reservations-page .reservations-header:hover .sort-icon {
+	display: inline-block;
+  }
+  
+  .reservations-page .sort-icon svg {
+	width: 12px;
+	height: 12px;
+	color: #555;
+  }
+  
+  /* Updated styles for Version 1 */
+  .reservations-page .reservations-grid {
+	display: grid;
+	gap: 10px;
+  }
+  
+  .reservations-page .no-reservations-row {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 20px;
+	font-size: 0.9em;
+	color: #555;
+	grid-column: 1 / -1; /* Span all columns */
+	height: 100%;        /* Ensure it takes full height */
+  }
+  
+  .reservations-page .no-reservations-desktop,
+  .reservations-page .no-reservations-mobile {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+  }
+  
+  
+  .reservations-page .buttons-container {
+	display: flex;
+	margin-top: 20px;
+	padding-bottom: 40px;
+  }
+  
+  .reservations-page .filter-button,
+  .reservations-page .print-button {
+	flex: 1;
+	background-color: #f0f0f0;
+	color: #000;
+	border: none;
+	padding: 10px;
+	border-radius: 5px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	font-size: 16px;
+  }
+  
+  .reservations-page .filter-button .button-icon,
+  .reservations-page .print-button .button-icon {
+	margin-right: 8px;
+  }
+  
+  .reservations-page .field-selector-modal {
+	padding: 20px;
+  }
+  
+  .reservations-page .field-selector-modal h2 {
+	margin-bottom: 20px;
+  }
+  
+  .reservations-page .field-selector-modal .field-options {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 10px;
+  }
+  
+  .reservations-page .field-selector-modal .field-option label {
+	display: flex;
+	align-items: center;
+  }
+  
+  .reservations-page .field-selector-modal .field-option input[type="checkbox"] {
+	margin-right: 8px;
+  }
+  
+  .reservations-page .field-selector-modal button {
+	margin-top: 20px;
+	padding: 10px 20px;
+	background-color: var(--color-blue);
+	color: white;
+	border: none;
+	cursor: pointer;
+	border-radius: 5px;
+  }
+  /* src/Components/ReservationsList/css/reservationList.css */
+
+/* Existing styles ... */
+
+/* New styles for the extra info row */
+.reservations-page .extra-info-row {
+	display: none; /* Hide by default */
+  }
+  
+  .reservations-page .extra-info-row .extra-info-content {
+	border-bottom: 1px solid #ccc;
+  }
+  
+  @media print {
+	/* Show the extra info row only when printing */
+	.reservations-page .extra-info-row {
+	  display: block;
+	  grid-column: 1 / -1; /* Span all columns */
+	  
+	}
+  
+	/* Optional: Adjust grid layout for printing */
+	.reservations-page .reservations-grid {
+	  grid-template-columns: 60px 70px repeat(auto-fill, minmax(100px, 1fr));
+	}
+  
+	/* Hide elements that are not needed in print */
+	.reservations-page .filter-button,
+	.reservations-page .print-button,
+	.reservations-page .pagination,
+	.reservations-page .header-cell.sortable {
+	  display: none;
+	}
+  
+	/* Ensure the extra info content is styled appropriately */
+	.reservations-page .extra-info-content {
+	  font-size: 0.9em;
+	  color: #333;
+	}
+
+	.reservations-page .reservation-row > div {
+		border-bottom: 1px solid #ccc;
+	  }
+
+	  .reservations-page .new-user-icon {
+		display: none;
+	  }
+
+	  .reservations-page .users-icon-gray {
+		display: none;
+	  }
+  }
+  

@@ -1,0 +1,23 @@
+
+:root {
+	--border-radius: 10px;
+}
+
+.app-component {
+	display: flex;
+	height: 100vh;
+	margin-top: 60px;
+  }
+  
+.content-routing {
+	flex: 1;
+	margin-left: 60px;
+  }
+  
+  body {
+	background-color: var(--color-bg);
+  }
+
+.modal {
+	z-index: var(--z-index-modal);
+}

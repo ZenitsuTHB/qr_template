@@ -1,0 +1,169 @@
+/* src/components/EmailSettings/css/emailSettings.css */
+
+/* Existing Styles */
+.email-settings-page {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+  }
+  
+  .email-settings-page .settings-title {
+	margin-top: 20px;
+	margin-bottom: 20px;
+  }
+  
+  .email-settings-page .settings-tabs {
+	width: 100%;
+	max-width: 1200px;
+  }
+  
+  .email-settings-page .tab-menu {
+	display: flex;
+	justify-content: center;
+	margin-bottom: 20px;
+  }
+  
+  .email-settings-page .buttons-container {
+	display: flex;
+	gap: 10px;
+  }
+  
+  .email-settings-page .tab-button {
+	position: relative;
+	padding: 10px 20px;
+	background: none;
+	border: none;
+	outline: none;
+	cursor: pointer;
+	font-size: 16px;
+	color: #333;
+	transition: color 0.3s ease;
+  }
+  
+  .email-settings-page .tab-button.active {
+	color: var(--color-blue);
+  }
+  
+  .email-settings-page .tab-underline {
+	position: absolute;
+	bottom: -2px;
+	left: 0;
+	right: 0;
+	height: 2px;
+	background-color: var(--color-blue);
+	border-radius: 5px;
+  }
+  
+  .email-settings-page .email-settings-grid {
+	display: grid;
+	grid-template-columns: 3fr 2fr; /* Updated for 2:1 ratio */
+	gap: 20px;
+	align-items: start;
+  }
+  
+  .email-settings-page .settings-container,
+  .email-settings-page .preview-container {
+	background-color: #fff;
+	border-radius: 10px;
+	padding: 30px;
+  }
+  
+  .email-settings-page .settings-form {
+	display: flex;
+	flex-direction: column;
+	width: 100%; /* Ensure the form takes full width */
+  }
+  
+  .email-settings-page .form-group {
+	margin-bottom: 20px;
+	width: 100%; /* Ensure each form group takes full width */
+  }
+  
+  .email-settings-page .form-group label {
+	text-align: left;
+	margin-bottom: 5px;
+	font-weight: 500;
+  }
+  
+  .email-settings-page .input-container {
+	position: relative;
+	width: 100%; /* Ensure input container takes full width */
+  }
+  
+  .email-settings-page .input-container select,
+  .email-settings-page .input-container input,
+  .email-settings-page .input-container textarea {
+	width: 100%;
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	font-size: 1rem;
+	transition: border-color 0.3s ease;
+  }
+  
+  .email-settings-page .input-container select:focus,
+  .email-settings-page .input-container input:focus,
+  .email-settings-page .input-container textarea:focus {
+	border-color: #0056b3;
+	outline: none;
+  }
+  
+  .email-settings-page .settings-button {
+	padding: 12px;
+	background-color: var(--color-blue);
+	color: #fff;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 1.1rem;
+	transition: background-color 0.3s ease;
+	width: 100%; /* Make the save button full width */
+  }
+  
+  .email-settings-page .settings-button:hover {
+	background-color: #0056b3;
+  }
+  
+
+  /* Updated Styles for Meldingen Tab */
+  .email-settings-page .meldingen-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: #fff;
+	border-radius: 10px;
+	padding: 30px;
+	max-width: 600px; /* Set maximum width */
+	width: 100%; /* Allow the container to take full width up to max-width */
+	margin: 0 auto; /* Center the container */
+	box-sizing: border-box; /* Include padding in the width */
+  }
+  
+  /* Ensure the form inside meldingen-container takes full width */
+  .email-settings-page .meldingen-container .settings-form {
+	width: 100%;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 900px) {
+	.email-settings-page .email-settings-grid {
+	  grid-template-columns: 1fr;
+	}
+  
+	.email-settings-page .preview-container {
+	  margin-top: 20px;
+	}
+  
+	.email-settings-page .meldingen-container {
+	  padding: 20px;
+	  max-width: 100%; /* Allow full width on smaller screens */
+	}
+  }
+  
+
+  @media (max-width: 900px) {
+	.email-settings-page {
+		padding-bottom: 60px !important;
+	  }
+	  
+  }

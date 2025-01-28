@@ -1,0 +1,11 @@
+/* ./css/calendarComponent.css */
+
+.calendar-page {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+	max-width: 800px;
+	margin: 20px auto; /* Added top margin */
+  }
+

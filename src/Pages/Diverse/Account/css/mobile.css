@@ -1,0 +1,7 @@
+
+@media (max-width: 900px) {
+	.welcome-page .welcome-message h1 {
+		font-size: 25px;
+		width: 100vw;
+	  }
+}

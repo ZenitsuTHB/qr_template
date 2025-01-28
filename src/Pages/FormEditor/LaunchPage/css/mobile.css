@@ -1,0 +1,25 @@
+
+
+@media (max-width: 900px) {
+	.launch-page .email-header {
+	  flex-direction: column;
+	  align-items: flex-start;
+	}
+
+	.launch-page .tab-button {
+	  font-size: 14px;
+	  padding: 6px 0;
+	}
+
+	.launch-page .launch-page-form {
+		background-color: var(--color-bg);
+		padding: 20px;
+		margin-left: 0px;
+		padding-right: 50px;
+		padding-bottom: 0;
+		border-radius: 8px;
+		box-shadow: none;
+		width: 100vw;
+	  }
+  }
+  

@@ -1,0 +1,19 @@
+@media (max-width: 900px) {
+	.profile-page .form-row {
+	  flex-direction: column;
+	}
+  
+	.profile-page .half-width {
+	  width: 100%;
+	}
+  
+	.profile-page .account-manage-form {
+	  gap: 10px;
+	}
+  
+	.profile-page .account-manage__button {
+	  font-size: 1rem;
+	  padding: 10px;
+	}
+  }
+  

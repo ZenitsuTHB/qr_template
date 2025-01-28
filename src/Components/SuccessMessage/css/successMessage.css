@@ -1,0 +1,15 @@
+.success-component .success-message {
+	display: flex;
+	align-items: center;
+	background-color: #d4edda;
+	color: #155724;
+	padding: 15px 20px;
+	border-radius: 4px;
+	margin-bottom: 20px;
+	width: 100%;
+  }
+  
+.success-component .success-icon {
+	font-size: 24px;
+	margin-right: 10px;
+  }

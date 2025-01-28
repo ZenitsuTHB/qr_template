@@ -1,0 +1,38 @@
+/* breadcrumb.css */
+
+.breadcrumb-component .breadcrumb {
+	display: flex;
+	align-items: center;
+	font-size: 14px;
+	margin-bottom: 10px;
+  }
+  
+  .breadcrumb-component .breadcrumb-app {
+	color: #777777;
+  }
+  
+  .breadcrumb-component .breadcrumb-link {
+	text-decoration: none;
+	color: #777777;
+	transition: color 0.3s ease;
+  }
+  
+  .breadcrumb-component .breadcrumb-link:hover {
+	color: var(--color-blue);
+  }
+  
+  .breadcrumb-component .breadcrumb-link-blue {
+		color: #777777
+  }
+  
+  .breadcrumb-component .breadcrumb-separator {
+	margin: 0 5px;
+	color: #777777;
+  }
+  
+  .breadcrumb-component .breadcrumb-current {
+	color: var(--color-blue)
+  }
+  
+
+  

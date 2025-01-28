@@ -1,0 +1,30 @@
+/* css/floorplan.css */
+
+.table-plan-component .floor-plan {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+  border: 2px solid #ccc;
+  box-sizing: border-box;
+  overflow: hidden;
+  background-image:
+    linear-gradient(to right, #ddd 1px, transparent 1px),
+    linear-gradient(to bottom, #ddd 1px, transparent 1px);
+  background-size: 50px 50px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  transition: width 0.2s, height 0.2s;
+}
+
+.table-plan-component .resizable-floor-plan {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.table-plan-component .alignment-line {
+  position: absolute;
+  background-color: red;
+  z-index: 100;
+}

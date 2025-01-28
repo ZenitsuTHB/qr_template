@@ -1,0 +1,33 @@
+/* src/Pages/FormEditor/LaunchPage/css/embedCodeTab.css */
+
+  .launch-page .embed-section {
+	margin-bottom: 20px;
+  }
+  
+  .launch-page .embed-section p {
+	margin-bottom: 15px;
+	font-size: 16px;
+	color: var(--color-black);
+  }
+  
+  .launch-page .code-container {
+	position: relative;
+  }
+  
+  .launch-page .copy-button {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	padding: 6px 12px;
+	font-size: 14px;
+	background-color: var(--color-blue);
+	color: #ffffff;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+  }
+  
+  .launch-page .copy-button:hover {
+	background-color: #0056b3;
+  }
+  

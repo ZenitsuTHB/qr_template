@@ -1,0 +1,90 @@
+/* Existing styles remain above */
+
+/* --------------------------------------- */
+/* Mobile Overrides */
+/* --------------------------------------- */
+@media (max-width: 900px) {
+	.sidebar-component {
+		position: fixed;
+		top: inherit;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-around;
+		width: 100vw;
+		margin-left: 0;
+		border-radius: 0;
+		background-color: #1e3a3f; /* Keep mobile background consistent */
+		overflow-x: auto;
+		transition: none;
+		padding-top: 10px;
+	}
+	
+	/* Hide expanded text on mobile */
+	.sidebar-component.expanded .sidebar-item__text {
+		display: none;
+	}
+
+	/* Show only icons */
+	.sidebar-item {
+		padding: 0;
+		margin: 0 10px;
+		height: auto;
+		transition: none;
+	}
+	
+	.sidebar-item__icon {
+		font-size: 1.4rem;
+		margin: 10px 0;
+		transition: none;
+	}
+
+	/* Disable hover effects on mobile */
+	.sidebar-item__text:hover,
+	.sidebar-item:hover,
+	.sidebar-toggle:hover,
+	.sidebar-pin:hover {
+		color: inherit;
+		background-color: transparent;
+	}
+	
+	/* Hide tooltips on mobile */
+	.tooltip {
+		display: none !important;
+		opacity: 0 !important;
+		visibility: hidden !important;
+	}
+	
+	.sidebar-toggle {
+		display: none;
+	}
+
+	/* Remove animations on mobile */
+	.sidebar-item__active-bg {
+		transition: none;
+	}
+
+	.sidebar-item__active .sidebar-item__icon {
+		color: var(--color-blue);
+	}
+
+	/* Remove secondary items indentation and styling on mobile if any */
+	.sidebar-item__secondary {
+		margin-top: 0;
+		margin-left: 0;
+		padding: 0;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.sidebar-item__secondary-item {
+		padding: 0;
+		margin: 0 5px;
+		color: var(--color-blue);
+		transition: none;
+	}
+}

@@ -1,0 +1,31 @@
+/* ./css/calendarGrid.css */
+
+.calendar-page .calendar-grid {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 800px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+}
+
+.calendar-page .calendar-grid-header,
+.calendar-page .calendar-grid-body {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+}
+
+.calendar-page .calendar-grid-header div {
+    text-align: center;
+    font-weight: bold;
+    padding: 5px 0;
+    background-color: #f0f0f0;
+}
+
+.calendar-page .calendar-grid-header {
+    border-bottom: none;
+    border-radius: 10px 10px 0px 0px;
+}
+
+
+

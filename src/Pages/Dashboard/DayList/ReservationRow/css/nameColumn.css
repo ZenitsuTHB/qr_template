@@ -1,0 +1,28 @@
+/* nameColumn.css */
+
+.reservations-page .name-column {
+	display: flex;
+	align-items: center;
+  }
+  
+  .reservations-page .new-user-icon {
+	color: var(--color-blue);
+	margin-right: 5px;
+	vertical-align: middle;
+	font-size: 10px;
+  }
+  
+  .reservations-page .name-link {
+	color: var(--color-blue);
+	text-decoration: none;
+  }
+  
+  .reservations-page .name-link:hover {
+	text-decoration: underline;
+  }
+
+  .reservations-page .new-reservation {
+	font-weight: bold;
+  }
+  
+  

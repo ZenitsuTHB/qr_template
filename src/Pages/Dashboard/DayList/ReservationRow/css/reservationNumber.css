@@ -1,0 +1,25 @@
+/* reservationNumber.css */
+
+.reservations-page .reservation-number {
+	width: 50px;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+  }
+  
+  .reservations-page .users-icon {
+	color: var(--color-blue);
+	margin-right: 3px;
+  }
+  
+  .reservations-page .users-icon-gray {
+	color: gray;
+	margin-right: 3px;
+  }
+  
+  @media (max-width: 900px) {
+	.reservations-page .reservation-number {
+		justify-content: flex-start;
+		margin-left: -1px;
+	  }
+  }

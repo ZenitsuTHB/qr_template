@@ -1,0 +1,64 @@
+/* bezettingspercentageForm.css */
+
+.calendar-page .bezettingspercentage-form-container {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 16px;
+	width: 100%;
+	border-bottom: 1px solid #e0e0e0; /* Optional: bottom border */
+	gap: 16px;
+  }
+
+  .calendar-page .form-label {
+	margin-bottom: 20px;
+	font-size: 1rem;
+	font-weight: 500;
+	color: #333; /* Darker color for better readability */
+  }
+  
+  .calendar-page .input-container {
+	position: relative;
+	flex: 1;
+	display: flex;
+	align-items: center;
+  }
+  
+  .calendar-page .input-container:not(:last-child) {
+	margin-right: 16px;
+  }
+  
+  .calendar-page .input-icon {
+	position: absolute;
+	left: 10px;
+	margin-top: 5px;
+	color: #6c757d; /* Gray color */
+	pointer-events: none;
+  }
+
+  .calendar-page .form-group {
+	width: 100% !important;
+  }
+  
+  .calendar-page .standard-input {
+	width: 100%;
+	margin-top: 5px;
+	padding: 10px 10px 10px 35px; /* Padding left to accommodate icon */
+	border: 1px solid #ccc;
+	border-radius: var(--border-radius); /* Match var(--border-radius) if defined */
+	font-size: 1rem;
+	transition: border-color 0.3s ease;
+	background-color: var(--color-white);
+  }
+  
+  .calendar-page .standard-input:focus {
+	border-color: var(--color-blue); /* Match var(--color-blue) */
+	outline: none;
+  }
+  
+  .calendar-page .button-container {
+	flex: 1;
+	display: flex;
+	justify-content: flex-end;
+  }
+  

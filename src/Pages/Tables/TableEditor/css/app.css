@@ -1,0 +1,32 @@
+/* css/app.css */
+
+.table-plan-component .app-container {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  width: 100vw;
+  box-sizing: border-box;
+}
+
+.table-plan-component .floor-plan {
+  flex: 3;
+  margin-right: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+
+.table-plan-component .floor-plan-element {
+  z-index: 1; /* Tables are on top */
+}
+
+.table-plan-component .line {
+  position: absolute;
+  background-color: #d2b48c;
+  height: 2px;
+  z-index: 0; /* Lines are below */
+  pointer-events: auto;
+  cursor: pointer;
+}

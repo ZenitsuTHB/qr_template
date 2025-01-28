@@ -1,0 +1,728 @@
+START-FILE-(path:index.js)
+import React from 'react';
+import FloorPlan from './FloorPlan.js';
+import Sidebar from './Sidebar.js';
+import { withHeader } from '../../Components/Structural/Header/index.js';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import './css/app.css';
+
+const TablePlan = () => {
+  const tables = [
+    { id: 1, numberOfGuests: 4 },
+    { id: 2, numberOfGuests: 6 },
+    { id: 3, numberOfGuests: 2 },
+    { id: 4, numberOfGuests: 8 },
+    { id: 5, numberOfGuests: 4 },
+    { id: 6, numberOfGuests: 5 },
+  ];
+
+  const walls = [
+    { id: 1, length: 3 },
+    { id: 2, length: 5 },
+    { id: 3, length: 2 },
+    { id: 4, length: 4 },
+    { id: 5, length: 6 },
+  ];
+
+  return (
+    <DndProvider backend={HTML5Backend}>
+      <div className="table-plan-component">
+        <div className="app-container">
+          <FloorPlan />
+          <Sidebar tables={tables} walls={walls} />
+        </div>
+      </div>
+    </DndProvider>
+  );
+};
+
+export default withHeader(TablePlan);
+END-FILE
+START-FILE-(path:FloorPlan.js)
+import React, { useState, useCallback } from 'react';
+import { useDrop } from 'react-dnd';
+import './css/floorPlan.css';
+import { ResizableBox } from 'react-resizable';
+import 'react-resizable/css/styles.css';
+import FloorPlanElement from './FloorPlanElement.js';
+
+const FloorPlan = () => {
+  const [elements, setElements] = useState([]);
+
+  const addElement = (element) => {
+    setElements((prevElements) => [...prevElements, element]);
+  };
+
+  const moveElement = useCallback((id, x, y) => {
+    setElements((prevElements) =>
+      prevElements.map((el) =>
+        el.id === id
+          ? {
+              ...el,
+              x,
+              y,
+            }
+          : el
+      )
+    );
+  }, []);
+
+  const snapToGrid = (x, y, gridSize = 50) => {
+    const snappedX = Math.round(x / gridSize) * gridSize;
+    const snappedY = Math.round(y / gridSize) * gridSize;
+    return [snappedX, snappedY];
+  };
+
+  const [, drop] = useDrop({
+    accept: 'ITEM',
+    drop: (item, monitor) => {
+      const offset = monitor.getClientOffset();
+      const floorPlanRect = document
+        .getElementById('floor-plan-container')
+        .getBoundingClientRect();
+
+      let x = offset.x - floorPlanRect.left - item.width / 2;
+      let y = offset.y - floorPlanRect.top - item.height / 2;
+
+      const [snappedX, snappedY] = snapToGrid(x, y);
+      x = Math.max(0, Math.min(snappedX, floorPlanRect.width - item.width));
+      y = Math.max(0, Math.min(snappedY, floorPlanRect.height - item.height));
+
+      if (item.id) {
+        moveElement(item.id, x, y);
+      } else {
+        const id = Date.now();
+        addElement({
+          id,
+          type: item.elementType,
+          subtype: item.subtype,
+          x,
+          y,
+          width: item.width,
+          height: item.height,
+          capacity: item.capacity,
+          name:
+            item.elementType === 'table'
+              ? `${item.subtype.charAt(0).toUpperCase() + item.subtype.slice(1)} Table ${id}`
+              : `${item.subtype.charAt(0).toUpperCase() + item.subtype.slice(1)} Decoration ${id}`,
+          minCapacity: item.minCapacity || 1,
+          maxCapacity: item.maxCapacity || 10,
+          priority: 'Medium',
+        });
+      }
+    },
+  });
+
+  return (
+    <ResizableBox
+      width={800}
+      height={600}
+      minConstraints={[400, 300]}
+      maxConstraints={[1600, 1200]}
+      className="table-plan-component resizable-floor-plan"
+    >
+      <div id="floor-plan-container" className="table-plan-component floor-plan" ref={drop}>
+        {elements.map((el) => (
+          <FloorPlanElement key={el.id} element={el} moveElement={moveElement} />
+        ))}
+      </div>
+    </ResizableBox>
+  );
+};
+
+export default FloorPlan;
+END-FILE
+START-FILE-(path:FloorPlanElement.js)
+import React, { useState, useEffect } from 'react';
+import Table from './Table.js';
+import Walls from './Walls.js';
+
+const FloorPlanElement = ({ element, moveElement }) => {
+  const [position, setPosition] = useState({ x: element.x, y: element.y });
+  const [isDragging, setIsDragging] = useState(false);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setOffset({
+      x: e.clientX - position.x,
+      y: e.clientY - position.y,
+    });
+  };
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (isDragging) {
+        setPosition({
+          x: e.clientX - offset.x,
+          y: e.clientY - offset.y,
+        });
+      }
+    };
+
+    const handleMouseUp = () => {
+      if (isDragging) {
+        setIsDragging(false);
+        moveElement(element.id, position.x, position.y);
+      }
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging, offset, position, moveElement, element.id]);
+
+  useEffect(() => {
+    setPosition({ x: element.x, y: element.y });
+  }, [element.x, element.y]);
+
+  const style = {
+    position: 'absolute',
+    left: position.x,
+    top: position.y,
+    width: element.width,
+    height: element.height,
+    opacity: isDragging ? 0.5 : 1,
+    cursor: 'move',
+    transition: isDragging ? 'none' : 'left 0.2s, top 0.2s',
+  };
+
+  return (
+    <div className="table-plan-component floor-plan-element" onMouseDown={handleMouseDown} style={style}>
+      {element.type === 'table' ? (
+        <Table numberOfGuests={element.capacity} />
+      ) : element.type === 'wall' ? (
+        <Walls length={element.width / 20 + 1} />
+      ) : null}
+    </div>
+  );
+};
+
+export default FloorPlanElement;
+END-FILE
+START-FILE-(path:Sidebar.js)
+import React, { useState, useRef } from 'react';
+import { useDrag } from 'react-dnd';
+import { motion } from 'framer-motion';
+import Table from './Table.js';
+import Walls from './Walls.js';
+import './css/sidebar.css';
+
+const TableItem = ({ table }) => {
+  const [{ isDragging }, drag] = useDrag(() => ({
+    type: 'ITEM',
+    item: {
+      elementType: 'table',
+      subtype: 'round',
+      width: 70,
+      height: 70,
+      capacity: table.numberOfGuests,
+    },
+    collect: (monitor) => ({
+      isDragging: !!monitor.isDragging(),
+    }),
+  }), [table]);
+
+  return (
+    <div className="table-plan-component item" ref={drag} style={{ opacity: isDragging ? 0.5 : 1 }}>
+      <Table numberOfGuests={table.numberOfGuests} />
+      <div className="table-plan-component item-info">
+        <p>Tafel {table.id}</p>
+        <p>Gasten: {table.numberOfGuests}</p>
+      </div>
+    </div>
+  );
+};
+
+const WallItem = ({ wall }) => {
+  const [{ isDragging }, drag] = useDrag(() => ({
+    type: 'ITEM',
+    item: {
+      elementType: 'wall',
+      subtype: 'wall',
+      width: wall.length * 20,
+      height: 20,
+    },
+    collect: (monitor) => ({
+      isDragging: !!monitor.isDragging(),
+    }),
+  }), [wall]);
+
+  return (
+    <div className="table-plan-component item" ref={drag} style={{ opacity: isDragging ? 0.5 : 1 }}>
+      <Walls length={wall.length} />
+      <div className="table-plan-component item-info">
+        <p>Muur {wall.id}</p>
+        <p>Lengte: {wall.length} eenheden</p>
+      </div>
+    </div>
+  );
+};
+
+const Sidebar = ({ tables, walls }) => {
+  const [activeTab, setActiveTab] = useState('tables');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [pendingTab, setPendingTab] = useState(null);
+
+  const tablesRef = useRef();
+  const wallsRef = useRef();
+
+  const isIframe = typeof window !== 'undefined' && window.isIframe;
+
+  const tabs = [
+    { id: 'tables', label: 'Tafels', title: "Beheer Tafels" },
+    { id: 'walls', label: 'Muren', title: "Beheer Muren" },
+  ];
+
+  const filteredTables = tables.filter(
+    (table) =>
+      table.id.toString().includes(searchTerm) ||
+      table.numberOfGuests.toString().includes(searchTerm)
+  );
+
+  const filteredWalls = walls.filter(
+    (wall) =>
+      wall.id.toString().includes(searchTerm) ||
+      wall.length.toString().includes(searchTerm)
+  );
+
+  const handleTabClick = async (tabId, tabTitle) => {
+    let currentRef;
+    if (activeTab === 'tables') {
+      currentRef = tablesRef;
+    } else if (activeTab === 'walls') {
+      currentRef = wallsRef;
+    }
+
+    if (currentRef && currentRef.current && currentRef.current.isDirty) {
+      if (isIframe) {
+        try {
+          await currentRef.current.handleSave();
+          setActiveTab(tabId);
+        } catch (error) {
+          console.error('Error saving before tab switch:', error);
+        }
+      } else {
+        setPendingTab({ id: tabId, title: tabTitle });
+      }
+    } else {
+      setActiveTab(tabId);
+    }
+  };
+
+  return (
+    <div className="table-plan-component sidebar">
+      <div className="table-plan-component tabs">
+        <div className="table-plan-component buttons-container">
+          {tabs.map((tab) => (
+            <motion.button
+              key={tab.id}
+              type="button"
+              className={`table-plan-component tab-button ${activeTab === tab.id ? 'active' : ''}`}
+              onClick={() => handleTabClick(tab.id, tab.title)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <span className="table-plan-component tab-label">{tab.label}</span>
+              {activeTab === tab.id && (
+                <motion.div
+                  layoutId="underline-sidebar-tabs"
+                  className="table-plan-component tab-underline"
+                  initial={false}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                />
+              )}
+            </motion.button>
+          ))}
+        </div>
+      </div>
+      <div className="table-plan-component search-bar">
+        <input
+          type="text"
+          placeholder={`Zoek ${activeTab === 'tables' ? 'Tafels' : 'Muren'}...`}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          aria-label={`Zoek ${activeTab === 'tables' ? 'Tafels' : 'Muren'}`}
+        />
+      </div>
+      <div className="table-plan-component items-list">
+        {activeTab === 'tables' && filteredTables.length > 0 ? (
+          <div className="table-plan-component grid-container">
+            {filteredTables.map((table) => (
+              <TableItem key={table.id} table={table} />
+            ))}
+          </div>
+        ) : activeTab === 'walls' && filteredWalls.length > 0 ? (
+          <div className="table-plan-component grid-container">
+            {filteredWalls.map((wall) => (
+              <WallItem key={wall.id} wall={wall} />
+            ))}
+          </div>
+        ) : (
+          <p className="table-plan-component no-results">Geen {activeTab === 'tables' ? 'tafels' : 'muren'} gevonden.</p>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Sidebar;
+END-FILE
+START-FILE-(path:Table.js)
+import React from 'react';
+import './css/table.css';
+
+const Table = ({ numberOfGuests }) => {
+  const isSquare = numberOfGuests === 4;
+
+  const tableWidth = isSquare ? 70 : 70 + (numberOfGuests - 4) * 15;
+  const tableHeight = 70;
+
+  const chairsPerSide = Math.ceil(numberOfGuests / 2);
+
+  const topChairs = [];
+  const bottomChairs = [];
+
+  for (let i = 0; i < chairsPerSide; i++) {
+    topChairs.push(i);
+    bottomChairs.push(i);
+  }
+
+  return (
+    <div
+      className="table-plan-component table-container"
+      style={{ width: `${tableWidth}px`, height: `${tableHeight + 80}px` }}
+    >
+      <div
+        className="table-plan-component chairs top-chairs"
+        style={{
+          width: `${tableWidth}px`,
+        }}
+      >
+        {topChairs.slice(0, Math.floor(numberOfGuests / 2)).map((chair, index) => (
+          <div key={`top-${index}`} className="table-plan-component chair"></div>
+        ))}
+      </div>
+      <div
+        className="table-plan-component table"
+        style={{
+          width: `${tableWidth}px`,
+          height: `${tableHeight}px`,
+        }}
+      ></div>
+      <div
+        className="table-plan-component chairs bottom-chairs"
+        style={{
+          width: `${tableWidth}px`,
+        }}
+      >
+        {bottomChairs.slice(0, Math.ceil(numberOfGuests / 2)).map((chair, index) => (
+          <div key={`bottom-${index}`} className="table-plan-component chair"></div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default Table;
+END-FILE
+START-FILE-(path:Walls.js)
+import React from 'react';
+import './css/walls.css';
+
+const Walls = ({ length }) => {
+  const wallWidth = (length - 1) * 20;
+  const wallHeight = 20;
+
+  return (
+    <div
+      className="table-plan-component walls-container"
+      style={{ width: `${wallWidth}px`, height: `${wallHeight}px` }}
+    >
+      <div className="table-plan-component wall"></div>
+    </div>
+  );
+};
+
+export default Walls;
+END-FILE
+START-FILE-(path:css/app.css)
+.table-plan-component .app-container {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  width: 100vw;
+  box-sizing: border-box;
+  padding: 20px;
+}
+
+.table-plan-component .floor-plan {
+  flex: 3;
+  margin-right: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+END-FILE
+START-FILE-(path:css/floorPlan.css)
+.table-plan-component .floor-plan {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+  border: 2px solid #ccc;
+  box-sizing: border-box;
+  overflow: hidden;
+  background-image:
+    linear-gradient(to right, #ddd 1px, transparent 1px),
+    linear-gradient(to bottom, #ddd 1px, transparent 1px);
+  background-size: 50px 50px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  transition: width 0.2s, height 0.2s;
+}
+
+.table-plan-component .resizable-floor-plan {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+END-FILE
+START-FILE-(path:css/sidebar.css)
+.table-plan-component .sidebar {
+  width: 350px;
+  position: fixed;
+  height: calc(100% - 60px);
+  right: 0;
+  top: 60px;
+  background-color: rgb(220, 220, 220);
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.table-plan-component .tabs {
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  margin-bottom: 30px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.table-plan-component .tabs .buttons-container {
+  display: flex;
+}
+
+.table-plan-component .tabs .tab-button {
+  position: relative;
+  padding: 10px 20px;
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-size: 16px;
+  color: #333;
+  transition: color 0.3s;
+}
+
+.table-plan-component .tabs .tab-button.active {
+  color: var(--color-blue, var(--color-blue));
+}
+
+.table-plan-component .tabs .tab-button:hover {
+  color: #555;
+}
+
+.table-plan-component .tabs .tab-underline {
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--color-blue, var(--color-blue));
+  border-radius: 5px;
+}
+
+.table-plan-component .search-bar {
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.table-plan-component .search-bar input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.table-plan-component .items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.table-plan-component .grid-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.table-plan-component .item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid #e0e0e0;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: #fafafa;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.table-plan-component .item:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.table-plan-component .item-info {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.table-plan-component .item-info p {
+  margin: 2px 0;
+  font-size: 14px;
+  color: #555555;
+}
+
+.table-plan-component .no-results {
+  text-align: center;
+  color: #888888;
+}
+
+.table-plan-component .unsaved-changes-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.table-plan-component .unsaved-changes-modal .modal-content {
+  background-color: #fff;
+  padding: 30px 20px;
+  border-radius: 5px;
+  width: 90%;
+}
+
+.table-plan-component .unsaved-changes-modal .modal-content p {
+  font-size: 16px;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.table-plan-component .unsaved-changes-modal .modal-buttons {
+  display: flex;
+  justify-content: center;
+}
+
+.table-plan-component .unsaved-changes-modal .modal-buttons .cancel-button,
+.table-plan-component .unsaved-changes-modal .modal-buttons .discard-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  position: relative;
+  border-radius: 5px;
+}
+
+.table-plan-component .unsaved-changes-modal .modal-buttons .cancel-button {
+  margin-right: 10px;
+  background-color: #f0f0f0;
+  color: #333333;
+}
+
+@media (max-width: 768px) {
+  .table-plan-component .grid-container {
+    grid-template-columns: 1fr;
+  }
+}
+END-FILE
+START-FILE-(path:css/table.css)
+.table-plan-component .table-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80px;
+}
+
+.table-plan-component .table {
+  background-color: #f5f5dc;
+  border: 2px solid #d2b48c;
+  border-radius: 8px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.table-plan-component .chairs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+.table-plan-component .top-chairs {
+  top: 0;
+  transform: translate(-50%, 150%);
+}
+
+.table-plan-component .bottom-chairs {
+  bottom: 0;
+  transform: translate(-50%, -150%);
+}
+
+.table-plan-component .chair {
+  width: 20px;
+  height: 20px;
+  background-color: #f5f5dc;
+  border: 2px solid #d2b48c;
+  border-radius: 50%;
+}
+END-FILE
+START-FILE-(path:css/walls.css)
+.table-plan-component .walls-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px;
+}
+
+.table-plan-component .wall {
+  width: 100%;
+  height: 100%;
+  background-color: #8b4513;
+  border: 2px solid #654321;
+  border-radius: 4px;
+}
+END-FILE

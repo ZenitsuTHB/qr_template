@@ -1,0 +1,40 @@
+/* reservationList.css */
+
+/* Existing Styles */
+.reservations-page .search-bars-container {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 20px;
+	margin-top: 25px;
+	background-color: var(--color-bg) !important;
+  }
+  
+  .reservations-page .search-bar {
+	flex: 1;
+	margin: 0 10px;
+	font-size: 15px;
+	height: 40px;
+	padding: 0 10px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	background-color: var(--color-bg) !important;
+  }
+  
+  /* Responsive Styles for Mobile Devices */
+  @media (max-width: 900px) {
+	.reservations-page .search-bars-container {
+	  flex-direction: column; /* Stack search bars vertically */
+	  align-items: stretch;    /* Ensure search bars take full width */
+	  margin-top: 15px;        /* Adjust top margin if needed */
+	  margin-bottom: 15px;     /* Adjust bottom margin if needed */
+	}
+  
+	.reservations-page .search-bar {
+	  margin: 10px 0;  /* Add vertical spacing between search bars */
+	  width: 100%;     /* Ensure search bars take full width */
+	  padding: 10px !important;
+	  margin: 5px;
+	  background-color: white !important;
+	}
+  }
+  

@@ -1,0 +1,148 @@
+.profile-page {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	margin: 0 auto;
+	padding: 20px;
+	max-width: 600px; /* Restrict overall container width */
+	width: 100%; 
+  }
+
+  
+
+.profile-page__container {
+	position: relative;
+	width: 100%;
+	max-width: 600px;
+	text-align: center;
+}
+  
+.profile-page__image-container {
+	margin-bottom: -75px;
+	z-index: 1;
+	cursor: pointer;
+}
+  
+.profile-page__image {
+	width: 150px;
+	height: 150px;
+	object-fit: cover;
+}
+  
+.profile-page__bio-container {
+	background-color: #fff;
+	border-radius: 10px;
+	padding: 80px 20px 20px 20px;
+	margin-top: -50px; 
+}
+  
+.profile-page__name {
+	margin-top: 0;
+	margin-bottom: 20px;
+	font-size: 24px;
+	color: black;
+}
+  
+.profile-page__bio {
+	margin: 0 0 20px 0;
+	font-size: 16px;
+	color: black;
+}
+  
+.profile-page__tags {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+  
+.profile-page__tag {
+	background-color: #e0f7fa;
+	color: var(--color-blue);
+	padding: 8px 12px;
+	border-radius: 15px;
+	margin: 5px;
+	font-size: 14px;
+}
+  
+.profile-page__modal {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	backdrop-filter: blur(5px);
+	background-color: var(--color-modal-bg);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	animation: modalFadeIn 0.5s ease;
+	z-index: 100000;
+}
+  
+.profile-page__modal-content {
+	background-color: #fff;
+	padding: 20px;
+	border-radius: var(--border-radius);
+	position: relative;
+	width: 80%;
+	max-width: 500px;
+	animation: modalContentBounceIn 0.6s ease;
+}
+  
+.profile-page__modal-close {
+	position: absolute;
+	top: 10px;
+	right: 15px;
+	font-size: 24px;
+	cursor: pointer;
+}
+  
+.profile-page__avatar-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+	gap: 10px;
+	margin-top: 20px;
+}
+  
+.profile-page__avatar-option {
+	width: 100%;
+	cursor: pointer;
+	opacity: 0;
+	transform: scale(0.8);
+	transition: transform 0.2s ease;
+	animation: avatarFadeIn 0.5s forwards;
+}
+
+.profile-page__bio {
+	font-size: 17px;
+	min-height: 150px;
+	width: 100%;
+	padding: 12px;
+	background-color: var(--color-white);
+	border-radius: 20px;
+	text-align: left;
+	padding: 30px;
+	padding-top: 15px;
+	margin: 0;
+}
+
+.profile-page__edit-arrow {
+	position: absolute;
+	bottom: 10px;
+	right: 10px;
+	cursor: pointer;
+	color: var(--color-blue);
+	font-size: 1.5rem;
+  }
+
+.profile-page__bio-container.editing .profile-page__bio {
+	background-color: var(--color-nav-selection);
+}
+  
+  .profile-page__bio_p {
+	height: fit-content;
+  }
+
+
+  

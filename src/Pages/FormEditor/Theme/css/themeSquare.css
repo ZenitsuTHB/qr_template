@@ -1,0 +1,55 @@
+/* themeSquare.css */
+
+.theme-page .theme-square {
+	width: 180px;
+	border-radius: 12px;
+	overflow: hidden;
+	cursor: pointer;
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .theme-page .theme-square:hover {
+	transform: translateY(-5px);
+	box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .theme-page .theme-square-content {
+	display: flex;
+	height: 180px;
+  }
+  
+  .theme-page .theme-square-left,
+  .theme-page .theme-square-right {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+  }
+  
+  .theme-page .theme-square-left {
+	background-color: currentColor;
+  }
+  
+  .theme-page .theme-square-right img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+  }
+  
+ .theme-page .theme-square-right img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+  }
+    
+  .theme-page .theme-square-title {
+	text-align: center;
+	padding: 12px;
+	background: #fff;
+	font-size: 16px;
+	font-weight: 600;
+	color: #333;
+	width: 100%;
+	box-sizing: border-box;
+  }
+  

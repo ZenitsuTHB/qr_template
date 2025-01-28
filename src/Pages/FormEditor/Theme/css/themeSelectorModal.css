@@ -1,0 +1,66 @@
+/* themeSelectorModal.css */
+
+.theme-page .theme-selector-modal {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: var(--z-index-modal) !important;
+	backdrop-filter: blur(5px);
+  }
+  
+  .theme-page .modal-overlay {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.5);
+	z-index: 0;
+  }
+  
+  .theme-page .modal-content {
+	position: relative;
+	background: #fff;
+	padding: 30px;
+	border-radius: 12px;
+	max-width: 800px;
+	width: 90%;
+	max-height: 80%;
+	overflow-y: auto;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+	animation: modalFadeIn 0.3s ease-out;
+  }
+  
+  .theme-page .modal-content h2 {
+	margin-bottom: 20px;
+	font-size: 24px;
+	color: #333;
+	text-align: center;
+  }
+  
+  .theme-page .modal-close-button {
+	position: absolute;
+	top: 15px;
+	right: 15px;
+	background: transparent;
+	border: none;
+	font-size: 24px;
+	color: #888;
+	cursor: pointer;
+	transition: color 0.3s ease;
+  }
+  
+  .theme-page .modal-close-button:hover {
+	color: #333;
+  }
+  
+  .theme-page .theme-grid {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+	justify-content: center;
+  }
+  

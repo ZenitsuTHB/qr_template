@@ -1,0 +1,73 @@
+/* Use the same CSS provided, adjusted for the value selector */
+
+.new-reservation-page .value-selector {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+	margin-bottom: 20px;
+  }
+
+  .new-reservation-page .non-absolute {
+	position: relative !important;
+  }
+
+  .new-reservation-page .non-absolute::before {
+	background: none;
+  }
+  
+  .new-reservation-page .predefined-values {
+	display: flex;
+	gap: 10px;
+  }
+  
+  .new-reservation-page .predefined-value-button {
+	flex: 1;
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: var(--border-radius);
+	background-color: var(--color-white);
+	cursor: pointer;
+	font-size: 1rem;
+	transition: background-color 0.3s ease;
+  }
+  
+  .new-reservation-page .predefined-value-button.active,
+  .new-reservation-page .predefined-value-button:hover {
+	background-color: var(--color-blue);
+	color: var(--color-white);
+  }
+  
+  .new-reservation-page .slider-container {
+	display: flex;
+	align-items: center;
+	gap: 15px;
+  }
+  
+  .new-reservation-page .slider {
+	flex: 1;
+	appearance: none;
+	-webkit-appearance: none;
+	height: 5px;
+	background: #ddd;
+	border-radius: 5px;
+	outline: none;
+  }
+  
+  .new-reservation-page .slider::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 20px;
+	height: 20px;
+	background: var(--color-blue);
+	cursor: pointer;
+	border-radius: 50%;
+  }
+  
+  .new-reservation-page .value-input {
+	width: 80px;
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: var(--border-radius);
+	font-size: 1rem;
+  }
+  

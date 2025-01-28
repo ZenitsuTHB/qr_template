@@ -1,0 +1,21 @@
+@media (max-width: 900px) {
+	.withHeader {
+		padding-left: 0px !important;
+		padding-right: 0px;
+	}
+
+	.title {
+		padding-left: 25px;
+		display: none;
+	}
+
+	.withHeader {
+		padding-right: 10px;
+	}
+
+	.breadcrumb  {
+		text-align: center;
+		padding-left: 25px;
+		display: none !important;
+	}
+}

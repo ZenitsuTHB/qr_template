@@ -1,0 +1,12 @@
+@media (max-width: 900px) {
+	.profile-page {
+		position: absolute;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 100%;
+	}
+
+	.profile-page__modal-content {
+		width: 90%;
+	}
+}

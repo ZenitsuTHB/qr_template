@@ -1,0 +1,112 @@
+/* src/components/FormSettings/css/settingsTabs.css */
+
+.form-settings-page .settings-tabs {
+	width: 100%;
+	max-width: 800px;
+	margin: 0 auto;
+  }
+  
+  .form-settings-page .tab-menu {
+	display: flex;
+	justify-content: center;
+	margin-bottom: 20px;
+  }
+  
+  .form-settings-page .buttons-container {
+	display: flex;
+  }
+
+  .form-settings-page .tab-underline {
+	border-radius: 5px;
+  }
+  
+  .form-settings-page .tab-button {
+	position: relative;
+	padding: 10px 20px;
+	background: none;
+	border: none;
+	outline: none;
+	cursor: pointer;
+	font-size: 16px;
+	color: #333;
+  }
+  
+  .form-settings-page .tab-button.active {
+	color: var(--color-blue);
+  }
+  
+  .form-settings-page .tab-underline {
+	position: absolute;
+	bottom: -2px;
+	left: 0;
+	right: 0;
+	height: 2px;
+	background-color: var(--color-blue);
+  }
+  
+  .form-settings-page .unsaved-changes-modal {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	backdrop-filter: blur(10px);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+  }
+  
+  .form-settings-page .modal-content {
+	background-color: #fff;
+	padding: 30px 20px;
+	border-radius: 5px;
+	width: 90%;
+  }
+  
+  .form-settings-page .modal-content p {
+	font-size: 16px;
+	margin-bottom: 30px;
+	text-align: center;
+  }
+  
+  .form-settings-page .modal-buttons {
+	display: flex;
+	justify-content: center;
+  }
+  
+  .form-settings-page .modal-buttons .cancel-button,
+  .form-settings-page .modal-buttons .discard-button {
+	padding: 10px 20px;
+	font-size: 16px;
+	cursor: pointer;
+	border: none;
+	position: relative;
+	border-radius: 5px;
+  }
+  
+  .form-settings-page .modal-buttons .cancel-button {
+	margin-right: 10px;
+  }
+  
+  
+  .form-settings-page .modal-buttons .discard-button {
+	margin-left: 20px;
+  }
+  
+  .form-settings-page .modal-buttons .discard-button::after {
+	content: '';
+	position: absolute;
+	top: -4px;
+	left: -4px;
+	bottom: -4px;
+	right: -4px;
+	border: 2px solid var(--color-red);
+	pointer-events: none;
+	border-radius: 10px;
+  }
+  
+  .form-settings-page .modal-buttons .discard-button:hover {
+	background-color: #b71c1c;
+  }
+  

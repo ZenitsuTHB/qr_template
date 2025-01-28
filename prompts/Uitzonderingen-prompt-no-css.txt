@@ -1,0 +1,1020 @@
+File Contents:
+
+--- ExceptionCalendar.js ---
+// src/Pages/Uitzonderingen/ExceptionCalendar.js
+
+import React, { useState, useEffect } from 'react';
+import './css/exceptions.css';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+
+const ExceptionCalendar = ({ exceptions, onDateClick, monthOffset, onMonthChange }) => {
+  const [calendarData, setCalendarData] = useState([]);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  const daysOfWeekShort = ['Ma', 'Di', 'Wo', 'Do', 'Vr', 'Za', 'Zo'];
+  const months = [
+    'Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni',
+    'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December',
+  ];
+
+  useEffect(() => {
+    generateCalendar();
+  }, [exceptions, monthOffset]);
+
+  // Helper function to normalize dates to midnight
+  const normalizeDate = (date) => {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  };
+
+  const generateCalendar = () => {
+    const today = new Date();
+    let monthToDisplay = today.getMonth() + monthOffset;
+    let yearToDisplay = today.getFullYear();
+
+    // Adjust for year overflow
+    if (monthToDisplay > 11) {
+      monthToDisplay = monthToDisplay % 12;
+      yearToDisplay += Math.floor((today.getMonth() + monthOffset) / 12);
+    } else if (monthToDisplay < 0) {
+      monthToDisplay = 12 + (monthToDisplay % 12);
+      yearToDisplay -= Math.ceil(Math.abs(monthOffset) / 12);
+    }
+
+    const firstDayOfMonth = new Date(yearToDisplay, monthToDisplay, 1);
+    const daysInMonth = new Date(yearToDisplay, monthToDisplay + 1, 0).getDate();
+
+    const startDay = (firstDayOfMonth.getDay() + 6) % 7; // Adjust so Monday is 0
+    const weeks = [];
+    let dayCounter = 1 - startDay;
+
+    for (let week = 0; week < 6; week++) {
+      const days = [];
+      for (let day = 0; day < 7; day++) {
+        if (dayCounter > 0 && dayCounter <= daysInMonth) {
+          const dateObj = new Date(yearToDisplay, monthToDisplay, dayCounter);
+          const dateStr = dateObj.toISOString().split('T')[0];
+
+          // Normalize dateObj
+          const normalizedDateObj = normalizeDate(dateObj);
+
+          // Determine the exceptions on this date considering daysOfWeek
+          const dateExceptions = exceptions.filter((exception) => {
+            const startDate = new Date(exception.startDate);
+            const endDate = new Date(exception.endDate);
+            const exceptionDaysOfWeek = exception.daysOfWeek || [];
+
+            // Normalize dates
+            const normalizedStartDate = normalizeDate(startDate);
+            const normalizedEndDate = normalizeDate(endDate);
+
+            // Get the day index (0: Sunday, 1: Monday, ..., 6: Saturday)
+            const dayOfWeekIndex = normalizedDateObj.getDay();
+            const dayOfWeekNames = ['zondag', 'maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag'];
+            const dayName = dayOfWeekNames[dayOfWeekIndex];
+
+            return (
+              normalizedDateObj >= normalizedStartDate &&
+              normalizedDateObj <= normalizedEndDate &&
+              (exception.type === 'Sluiting' || exception.type === 'Sluitingsdag' || exceptionDaysOfWeek.includes(dayName))
+            );
+          });
+
+          // Determine the highest priority exception type
+          let exceptionType = null;
+          if (dateExceptions.length > 0) {
+            const typePriority = ['Opening', 'Uitzondering', 'Sluiting'];
+            for (const type of typePriority) {
+              if (dateExceptions.some((ex) => ex.type === type || ex.type === 'Sluitingsdag')) {
+                exceptionType = type === 'Sluitingsdag' ? 'Sluiting' : type;
+                break;
+              }
+            }
+          }
+
+          days.push(
+            <td key={dayCounter} className="exceptions-page__calendar-cell">
+              <div
+                className={`exceptions-page__calendar-day ${
+                  exceptionType ? `tag-${exceptionType.toLowerCase()}` : ''
+                }`}
+                onClick={() => onDateClick(dateStr)}
+              >
+                {dayCounter}
+              </div>
+            </td>
+          );
+        } else {
+          days.push(<td key={`${week}-${day}`} className="exceptions-page__calendar-cell"></td>);
+        }
+        dayCounter++;
+      }
+      weeks.push(<tr key={week}>{days}</tr>);
+    }
+
+    setCalendarData({
+      weeks,
+      month: months[monthToDisplay],
+      year: yearToDisplay,
+    });
+
+    setIsLoaded(true);
+  };
+
+  return (
+    <div className="exceptions-page__calendar">
+      <div className="exceptions-page__calendar-header">
+        <FaChevronLeft
+          className="exceptions-page__calendar-nav"
+          onClick={() => onMonthChange(-1)}
+        />
+        <h3>
+          {calendarData.month} {calendarData.year}
+        </h3>
+        <FaChevronRight
+          className="exceptions-page__calendar-nav"
+          onClick={() => onMonthChange(1)}
+        />
+      </div>
+      <table className="exceptions-page__calendar-table">
+        <thead>
+          <tr>
+            {daysOfWeekShort.map((day) => (
+              <th key={day}>{day}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>{calendarData.weeks}</tbody>
+      </table>
+      <div className="exceptions-page__calendar-legend">
+        <span>
+          <span className="exceptions-page__calendar-legend-box tag-opening"></span> Opening
+        </span>
+        <span>
+          <span className="exceptions-page__calendar-legend-box tag-uitzondering"></span> Uitzondering
+        </span>
+        <span>
+          <span className="exceptions-page__calendar-legend-box tag-sluiting"></span> Sluiting
+        </span>
+      </div>
+    </div>
+  );
+};
+
+export default ExceptionCalendar;
+
+
+--- ExceptionForm.js ---
+// src/Pages/Uitzonderingen/ExceptionForm.js
+
+import React from 'react';
+import './css/exceptions.css';
+import { shifts } from './constants'; // Adjust the import path if necessary
+import useExceptionForm from './Hooks/useExceptionForm';
+import { getTodayDateString, getTimeOptions } from './Utils/utils';
+
+const ExceptionForm = ({ api, triggerNotification, refreshExceptions }) => {
+  const initialFormData = {
+    title: '',
+    type: '',
+    timeframe: '',
+    date: '',
+    startDate: '',
+    endDate: '',
+    startHour: '',
+    endHour: '',
+    maxSeats: '',
+    daysOfWeek: [],
+  };
+
+  const {
+    formData,
+    errors,
+    handleChange,
+    handleSubmit,
+    startDateRef,
+    endDateRef,
+  } = useExceptionForm(initialFormData, api, triggerNotification, refreshExceptions);
+
+  return (
+    <form className="exceptions-page__form" onSubmit={handleSubmit}>
+      <div className="exceptions-page__form-group">
+        <label>Titel</label>
+        <input
+          type="text"
+          name="title"
+          value={formData.title}
+          onChange={handleChange}
+          placeholder="Titel"
+          className="exceptions-page__input"
+        />
+        {errors.title && <p className="exceptions-page__error">{errors.title}</p>}
+      </div>
+
+      <div className="exceptions-page__form-group">
+        <label>Type</label>
+        <select
+          name="type"
+          value={formData.type}
+          onChange={handleChange}
+          className="exceptions-page__select"
+        >
+          <option value="">Selecteer Type</option>
+          <option value="Opening">Opening</option>
+          <option value="Sluiting">Sluiting</option>
+          <option value="Sluitingsdag">Sluitingsdag</option>
+          <option value="Sluitingsdagen">Sluitingsdagen</option>
+          <option value="Uitzondering">Uitzondering</option>
+        </select>
+        {errors.type && <p className="exceptions-page__error">{errors.type}</p>}
+      </div>
+
+      {formData.type && formData.type !== 'Sluitingsdag' && formData.type !== 'Sluitingsdagen' && (
+        <div className="exceptions-page__form-group">
+          <label>Toepassing</label>
+          <select
+            name="timeframe"
+            value={formData.timeframe}
+            onChange={handleChange}
+            className="exceptions-page__select"
+          >
+            <option value="">Selecteer Toepassing</option>
+            <option value="breakfast">Ochtend</option>
+            <option value="lunch">Middag</option>
+            <option value="dinner">Avond</option>
+          </select>
+          {errors.timeframe && <p className="exceptions-page__error">{errors.timeframe}</p>}
+        </div>
+      )}
+
+      {formData.type === 'Sluitingsdag' && (
+        <div className="exceptions-page__form-group">
+          <label>Datum</label>
+          <input
+            type="date"
+            name="date"
+            value={formData.date}
+            onChange={handleChange}
+            className="exceptions-page__input"
+            min={getTodayDateString()}
+          />
+          {errors.date && <p className="exceptions-page__error">{errors.date}</p>}
+        </div>
+      )}
+
+      {formData.type === 'Sluitingsdagen' && (
+        <>
+          <div className="exceptions-page__form-group">
+            <label>Start Datum</label>
+            <input
+              type="date"
+              name="startDate"
+              value={formData.startDate}
+              onChange={handleChange}
+              className="exceptions-page__input"
+              ref={startDateRef}
+              min={getTodayDateString()}
+            />
+            {errors.startDate && <p className="exceptions-page__error">{errors.startDate}</p>}
+          </div>
+
+          <div className="exceptions-page__form-group">
+            <label>Eind Datum</label>
+            <input
+              type="date"
+              name="endDate"
+              value={formData.endDate}
+              onChange={handleChange}
+              className="exceptions-page__input"
+              ref={endDateRef}
+              min={getTodayDateString()}
+            />
+            {errors.endDate && <p className="exceptions-page__error">{errors.endDate}</p>}
+          </div>
+        </>
+      )}
+
+      {(formData.type === 'Opening' ||
+        formData.type === 'Uitzondering' ||
+        formData.type === 'Sluiting') && (
+        <>
+          <div className="exceptions-page__form-group">
+            <label>Start Datum</label>
+            <input
+              type="date"
+              name="startDate"
+              value={formData.startDate}
+              onChange={handleChange}
+              className="exceptions-page__input"
+              ref={startDateRef}
+              min={getTodayDateString()}
+            />
+            {errors.startDate && <p className="exceptions-page__error">{errors.startDate}</p>}
+          </div>
+
+          <div className="exceptions-page__form-group">
+            <label>Eind Datum</label>
+            <input
+              type="date"
+              name="endDate"
+              value={formData.endDate}
+              onChange={handleChange}
+              className="exceptions-page__input"
+              ref={endDateRef}
+              min={getTodayDateString()}
+            />
+            {errors.endDate && <p className="exceptions-page__error">{errors.endDate}</p>}
+          </div>
+        </>
+      )}
+
+      {(formData.type === 'Opening' || formData.type === 'Uitzondering') && (
+        <>
+          <div className="exceptions-page__form-group">
+            <label>Start Uur</label>
+            <select
+              name="startHour"
+              value={formData.startHour}
+              onChange={handleChange}
+              className="exceptions-page__select"
+            >
+              <option value="">Selecteer Start Uur</option>
+              {formData.timeframe &&
+                getTimeOptions(formData.timeframe, shifts).map((time) => (
+                  <option key={time} value={time}>
+                    {time}
+                  </option>
+                ))}
+            </select>
+            {errors.startHour && <p className="exceptions-page__error">{errors.startHour}</p>}
+          </div>
+
+          <div className="exceptions-page__form-group">
+            <label>Eind Uur</label>
+            <select
+              name="endHour"
+              value={formData.endHour}
+              onChange={handleChange}
+              className="exceptions-page__select"
+            >
+              <option value="">Selecteer Eind Uur</option>
+              {formData.timeframe &&
+                getTimeOptions(formData.timeframe, shifts).map((time) => (
+                  <option key={time} value={time}>
+                    {time}
+                  </option>
+                ))}
+            </select>
+            {errors.endHour && <p className="exceptions-page__error">{errors.endHour}</p>}
+          </div>
+
+          <div className="exceptions-page__form-group">
+            <label>Max. Zitplaatsen</label>
+            <input
+              type="number"
+              name="maxSeats"
+              value={formData.maxSeats}
+              onChange={handleChange}
+              className="exceptions-page__input"
+            />
+            {errors.maxSeats && <p className="exceptions-page__error">{errors.maxSeats}</p>}
+          </div>
+        </>
+      )}
+
+      {/* Dagen van de week - Not shown for Sluitingsdag */}
+      {formData.type && formData.type !== 'Sluitingsdag' && (
+        <div className="exceptions-page__form-group">
+          <label>Dagen van de week</label>
+          <div className="exceptions-page__checkbox-group">
+            {['maandag', 'dinsdag', 'woensdag', 'donderdag', 'vrijdag', 'zaterdag', 'zondag'].map(
+              (day) => (
+                <label key={day} className="exceptions-page__checkbox-label">
+                  <input
+                    type="checkbox"
+                    name="daysOfWeek"
+                    value={day}
+                    checked={formData.daysOfWeek.includes(day)}
+                    onChange={handleChange}
+                    className="exceptions-page__checkbox"
+                  />
+                  {day.charAt(0).toUpperCase() + day.slice(1)}
+                </label>
+              )
+            )}
+          </div>
+          {errors.daysOfWeek && <p className="exceptions-page__error">{errors.daysOfWeek}</p>}
+        </div>
+      )}
+
+      <button type="submit" className="button-style-3">
+        Opslaan
+      </button>
+    </form>
+  );
+};
+
+export default ExceptionForm;
+
+
+--- ExceptionItem.js ---
+// src/Pages/Uitzonderingen/ExceptionItem.js
+
+import React, { useState } from 'react';
+import './css/exceptions.css';
+import { FaTrashAlt } from 'react-icons/fa';
+import ConfirmationModal from '../../Components/Structural/Modal/Delete';
+
+const ExceptionItem = ({ exception, api, triggerNotification, refreshExceptions }) => {
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+
+  const handleDeleteClick = () => {
+    setIsDeleteModalVisible(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    setIsDeleteModalVisible(false);
+    try {
+      await api.delete(`${window.baseDomain}api/exceptions/${exception._id}`);
+      triggerNotification('Uitzondering succesvol verwijderd', 'success');
+      refreshExceptions();
+    } catch (error) {
+      console.error('Error deleting exception:', error);
+      triggerNotification('Fout bij het verwijderen van de uitzondering', 'error');
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setIsDeleteModalVisible(false);
+  };
+
+  // Determine the color class based on the type
+  const typeColorClass = () => {
+    switch (exception.type) {
+      case 'Opening':
+        return 'tag-green';
+      case 'Uitzondering':
+        return 'tag-blue';
+      case 'Sluiting':
+      case 'Sluitingsdag':
+        return 'tag-orange';
+      default:
+        return '';
+    }
+  };
+
+  return (
+    <div className="exceptions-page__exception-item">
+      <div className="exceptions-page__exception-content">
+        <h4>
+          {exception.title}{' '}
+          <span className={`exceptions-page__tag ${typeColorClass()}`}>{exception.type}</span>
+        </h4>
+        {exception.type !== 'Sluiting' && exception.type !== 'Sluitingsdag' && exception.timeframe && (
+          <p>Toepassing: {exception.timeframe}</p>
+        )}
+        <p>
+          Geldig van {exception.startDate} tot {exception.endDate}
+        </p>
+        {(exception.type === 'Opening' || exception.type === 'Uitzondering') && (
+          <>
+            <p>
+              Van {exception.startHour} tot {exception.endHour}
+            </p>
+            <p>Max. Zitplaatsen: {exception.maxSeats}</p>
+          </>
+        )}
+        {exception.type !== 'Sluiting' && exception.type !== 'Sluitingsdag' && (
+          <p>Dagen: {exception.daysOfWeek.join(', ')}</p>
+        )}
+      </div>
+      <div className="exceptions-page__exception-actions">
+        <FaTrashAlt onClick={handleDeleteClick} className="exceptions-page__delete-icon" />
+      </div>
+      {isDeleteModalVisible && (
+        <ConfirmationModal
+          isVisible={isDeleteModalVisible}
+          title="Uitzondering Verwijderen"
+          message="Weet u zeker dat u deze uitzondering wilt verwijderen?"
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+          confirmText="Verwijderen"
+          cancelText="Annuleren"
+          confirmButtonClass="discard-button red"
+          cancelButtonClass="cancel-button"
+        />
+      )}
+    </div>
+  );
+};
+
+export default ExceptionItem;
+
+
+--- ExceptionList.js ---
+// src/Pages/Uitzonderingen/ExceptionList.js
+
+import React from 'react';
+import './css/exceptions.css';
+import ExceptionItem from './ExceptionItem';
+
+const ExceptionList = ({ exceptions, api, triggerNotification, refreshExceptions }) => {
+  return (
+    <div className="exceptions-page__list">
+      <h3>Uitzonderingen</h3>
+      {exceptions.length > 0 ? (
+        <div className="exceptions-page__exception-list">
+          {exceptions.map((exception) => (
+            <ExceptionItem
+              key={exception._id}
+              exception={exception}
+              api={api}
+              triggerNotification={triggerNotification}
+              refreshExceptions={refreshExceptions}
+            />
+          ))}
+        </div>
+      ) : (
+        <p>Geen uitzonderingen gevonden.</p>
+      )}
+    </div>
+  );
+};
+
+export default ExceptionList;
+
+
+--- ExceptionTabs.js ---
+// src/Pages/Uitzonderingen/ExceptionTabs.js
+
+import React from 'react';
+import './css/exceptions.css';
+
+const ExceptionTabs = ({ activeTab, onTabChange }) => {
+  const months = [
+    'Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni',
+    'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December',
+  ];
+
+  const today = new Date();
+  const currentMonth = months[today.getMonth()];
+  const nextMonth = months[(today.getMonth() + 1) % 12];
+
+  return (
+    <div className="exceptions-page__tabs-container">
+      <div className="exceptions-page__tabs">
+        <div
+          className={`exceptions-page__tab ${activeTab === 'current' ? 'active' : ''}`}
+          onClick={() => onTabChange('current')}
+        >
+          {currentMonth}
+        </div>
+        <div
+          className={`exceptions-page__tab ${activeTab === 'next' ? 'active' : ''}`}
+          onClick={() => onTabChange('next')}
+        >
+          {nextMonth}
+        </div>
+        <div
+          className={`exceptions-page__tab ${activeTab === 'all' ? 'active' : ''}`}
+          onClick={() => onTabChange('all')}
+        >
+          Alle
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ExceptionTabs;
+
+
+--- Hooks/useExceptionForm.js ---
+// src/hooks/useExceptionForm.js
+
+import { useState, useEffect, useRef } from 'react';
+import { getTodayDateString, isDateInPast, isStartDateAfterEndDate } from '../Utils/utils.js';
+
+const useExceptionForm = (initialFormData, api, triggerNotification, refreshExceptions) => {
+  const [formData, setFormData] = useState(initialFormData);
+  const [errors, setErrors] = useState({});
+  const startDateRef = useRef(null);
+  const endDateRef = useRef(null);
+
+  // Focus shift when start date is selected
+  useEffect(() => {
+    if (formData.startDate && !formData.endDate && endDateRef.current) {
+      endDateRef.current.focus();
+      // Animation to guide user
+      endDateRef.current.classList.add('highlight-animation');
+      setTimeout(() => {
+        endDateRef.current.classList.remove('highlight-animation');
+      }, 2000);
+    }
+  }, [formData.startDate]);
+
+  // Handle field changes
+  const handleChange = (e) => {
+    const { name, value, type: inputType, checked } = e.target;
+
+    if (inputType === 'checkbox' && name === 'daysOfWeek') {
+      const day = value;
+      setFormData((prevFormData) => {
+        let daysOfWeek = [...prevFormData.daysOfWeek];
+        if (checked) {
+          daysOfWeek.push(day);
+        } else {
+          daysOfWeek = daysOfWeek.filter((d) => d !== day);
+        }
+        return { ...prevFormData, daysOfWeek };
+      });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+    setErrors({ ...errors, [name]: '' });
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const validationErrors = {};
+    if (!formData.title.trim()) validationErrors.title = 'Titel is verplicht.';
+    if (!formData.type) validationErrors.type = 'Type is verplicht.';
+    if (formData.type !== 'Sluitingsdag' && formData.type !== 'Sluitingsdagen' && !formData.timeframe)
+      validationErrors.timeframe = 'Toepassing is verplicht.';
+
+    if (formData.type === 'Sluitingsdag' && !formData.date)
+      validationErrors.date = 'Datum is verplicht.';
+    if (formData.type === 'Sluitingsdagen' && !formData.startDate)
+      validationErrors.startDate = 'Startdatum is verplicht.';
+    if (formData.type === 'Sluitingsdagen' && !formData.endDate)
+      validationErrors.endDate = 'Einddatum is verplicht.';
+
+    if (
+      (formData.type === 'Opening' ||
+        formData.type === 'Uitzondering' ||
+        formData.type === 'Sluiting') &&
+      !formData.startDate
+    )
+      validationErrors.startDate = 'Startdatum is verplicht.';
+    if (
+      (formData.type === 'Opening' ||
+        formData.type === 'Uitzondering' ||
+        formData.type === 'Sluiting') &&
+      !formData.endDate
+    )
+      validationErrors.endDate = 'Einddatum is verplicht.';
+    if (
+      (formData.type === 'Opening' || formData.type === 'Uitzondering') &&
+      !formData.startHour
+    )
+      validationErrors.startHour = 'Startuur is verplicht.';
+    if (
+      (formData.type === 'Opening' || formData.type === 'Uitzondering') &&
+      !formData.endHour
+    )
+      validationErrors.endHour = 'Einduur is verplicht.';
+    if (
+      (formData.type === 'Opening' || formData.type === 'Uitzondering') &&
+      !formData.maxSeats
+    )
+      validationErrors.maxSeats = 'Max. Zitplaatsen is verplicht.';
+
+    if (
+      formData.daysOfWeek.length === 0 &&
+      formData.type !== '' &&
+      formData.type !== 'Sluitingsdag'
+    )
+      validationErrors.daysOfWeek = 'Selecteer minstens één dag.';
+
+    // Additional date validations
+    if (formData.startDate && isDateInPast(formData.startDate))
+      validationErrors.startDate = 'Startdatum mag niet in het verleden liggen.';
+    if (formData.endDate && isDateInPast(formData.endDate))
+      validationErrors.endDate = 'Einddatum mag niet in het verleden liggen.';
+    if (
+      formData.startDate &&
+      formData.endDate &&
+      isStartDateAfterEndDate(formData.startDate, formData.endDate)
+    ) {
+      validationErrors.startDate = 'Startdatum mag niet na de einddatum liggen.';
+      validationErrors.endDate = 'Einddatum mag niet voor de startdatum liggen.';
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    // Prepare payload
+    let payload = {
+      title: formData.title,
+      type: ['Sluitingsdag', 'Sluitingsdagen'].includes(formData.type)
+        ? 'Sluiting'
+        : formData.type,
+      timeframe:
+        formData.type === 'Sluitingsdag' || formData.type === 'Sluitingsdagen'
+          ? 'Volledige Dag'
+          : formData.timeframe,
+      startDate: formData.startDate,
+      endDate: formData.endDate,
+      startHour: formData.startHour,
+      endHour: formData.endHour,
+      maxSeats: formData.maxSeats,
+      daysOfWeek: formData.daysOfWeek,
+    };
+
+    // Handle Sluitingsdag (single date)
+    if (formData.type === 'Sluitingsdag') {
+      payload.startDate = formData.date;
+      payload.endDate = formData.date;
+      payload.daysOfWeek = []; // Clear daysOfWeek for Sluitingsdag
+    }
+
+    // Remove daysOfWeek for Sluitingsdag
+    if (formData.type === 'Sluitingsdag') {
+      delete payload.daysOfWeek;
+    }
+
+    payload = Object.fromEntries(
+      Object.entries(payload).filter(([_, value]) => value != null && value !== '')
+    );
+
+    try {
+      const response = await api.post(`${window.baseDomain}api/exceptions`, payload);
+      if (response) {
+        setFormData(initialFormData);
+        setErrors({});
+        triggerNotification('Uitzondering succesvol toegevoegd', 'success');
+        refreshExceptions();
+      } else {
+        triggerNotification('Fout bij het toevoegen van de uitzondering', 'error');
+      }
+    } catch (error) {
+      console.error('Error adding exception:', error);
+      triggerNotification('Fout bij het toevoegen van de uitzondering', 'error');
+    }
+  };
+
+  return {
+    formData,
+    errors,
+    handleChange,
+    handleSubmit,
+    startDateRef,
+    endDateRef,
+  };
+};
+
+export default useExceptionForm;
+
+
+--- Utils/utils.js ---
+// src/utils/utils.js
+
+// Function to get today's date in YYYY-MM-DD format
+export const getTodayDateString = () => {
+	const today = new Date();
+	const year = today.getFullYear();
+	const month = String(today.getMonth() + 1).padStart(2, '0');
+	const day = String(today.getDate()).padStart(2, '0');
+	return `${year}-${month}-${day}`;
+  };
+  
+  // Validation helper functions
+  export const isDateInPast = (dateStr) => {
+	const date = new Date(dateStr);
+	const now = new Date();
+	return date < now;
+  };
+  
+  export const isStartDateAfterEndDate = (startDateStr, endDateStr) => {
+	const startDate = new Date(startDateStr);
+	const endDate = new Date(endDateStr);
+	return startDate > endDate;
+  };
+  
+  // Generate time options based on 'Toepassing'
+  export const getTimeOptions = (shift, shifts) => {
+	const options = [];
+	const startTime = shifts[shift].start;
+	const endTime = shifts[shift].end;
+  
+	const [startHour, startMinute] = startTime.split(':').map(Number);
+	const [endHour, endMinute] = endTime.split(':').map(Number);
+  
+	let currentTime = new Date();
+	currentTime.setHours(startHour, startMinute, 0, 0);
+  
+	const endTimeObj = new Date();
+	endTimeObj.setHours(endHour, endMinute, 0, 0);
+  
+	while (currentTime <= endTimeObj) {
+	  const timeStr = currentTime.toTimeString().substring(0, 5);
+	  options.push(timeStr);
+	  currentTime.setMinutes(currentTime.getMinutes() + 15);
+	}
+  
+	return options;
+  };
+  
+
+--- constants.js ---
+// src/Pages/Uitzonderingen/constants.js
+
+export const shifts = {
+	breakfast: { start: '07:00', end: '11:00' },
+	lunch: { start: '11:00', end: '16:00' },
+	dinner: { start: '16:00', end: '23:00' },
+  };
+  
+
+--- index.js ---
+// src/Pages/Uitzonderingen/index.js
+
+import React, { useState, useEffect } from 'react';
+import { withHeader } from '../../Components/Structural/Header/index.js';
+import './css/exceptions.css';
+import useApi from '../../Hooks/useApi';
+import useNotification from '../../Components/Notification';
+import ExceptionForm from './ExceptionForm';
+import ExceptionList from './ExceptionList';
+import ExceptionCalendar from './ExceptionCalendar';
+import ExceptionTabs from './ExceptionTabs';
+import ExceptionItem from './ExceptionItem.js';
+
+const Uitzonderingen = () => {
+  const api = useApi();
+  const { triggerNotification, NotificationComponent } = useNotification();
+
+  // State for the list of exceptions
+  const [exceptions, setExceptions] = useState([]);
+  const [filteredExceptions, setFilteredExceptions] = useState([]);
+  const [activeTab, setActiveTab] = useState('current');
+  const [calendarMonthOffset, setCalendarMonthOffset] = useState(0); // For navigating months
+
+  // Fetch the exceptions at component mount
+  useEffect(() => {
+    const fetchExceptions = async () => {
+      try {
+        const data = await api.get(window.baseDomain + 'api/exceptions', { noCache: true });
+        if (Array.isArray(data)) {
+          setExceptions(data);
+        } else {
+          setExceptions([]);
+        }
+      } catch (error) {
+        console.error('Error fetching exceptions:', error);
+        setExceptions([]);
+        triggerNotification('Fout bij het ophalen van uitzonderingen.', 'error');
+      }
+    };
+    fetchExceptions();
+  }, [api, triggerNotification]);
+
+  // Filter exceptions based on the active tab
+  useEffect(() => {
+    const filterExceptionsByTab = () => {
+      const today = new Date();
+      const currentMonth = today.getMonth();
+      const nextMonth = (currentMonth + 1) % 12;
+
+      let filtered = [];
+
+      exceptions.forEach((exception) => {
+        const startDate = new Date(exception.startDate);
+        const endDate = new Date(exception.endDate);
+
+        switch (activeTab) {
+          case 'current':
+            if (startDate.getMonth() === currentMonth || endDate.getMonth() === currentMonth) {
+              filtered.push(exception);
+            }
+            break;
+          case 'next':
+            if (startDate.getMonth() === nextMonth || endDate.getMonth() === nextMonth) {
+              filtered.push(exception);
+            }
+            break;
+          case 'all':
+          default:
+            filtered.push(exception);
+            break;
+        }
+      });
+
+      setFilteredExceptions(filtered);
+    };
+
+    filterExceptionsByTab();
+  }, [exceptions, activeTab]);
+
+  // Handler to refresh exceptions
+  const refreshExceptions = async () => {
+    try {
+      const data = await api.get(window.baseDomain + 'api/exceptions', { noCache: true });
+      if (Array.isArray(data)) {
+        setExceptions(data);
+      } else {
+        setExceptions([]);
+      }
+    } catch (error) {
+      console.error('Error fetching exceptions:', error);
+      setExceptions([]);
+      triggerNotification('Fout bij het ophalen van uitzonderingen.', 'error');
+    }
+  };
+
+  // Handle tab change
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    if (tab === 'current') {
+      setCalendarMonthOffset(0);
+    } else if (tab === 'next') {
+      setCalendarMonthOffset(1);
+    } else if (tab === 'all') {
+      setCalendarMonthOffset(0); // Or handle 'all' differently
+    }
+  };
+
+  // Handle month navigation in calendar
+  const handleMonthChange = (offset) => {
+    setCalendarMonthOffset((prevOffset) => prevOffset + offset);
+  };
+
+  // Optional: If you still want to handle date clicks without displaying exceptions
+  const handleDateClick = (date) => {
+    // Implement any other logic you need when a date is clicked
+    console.log('Date clicked:', date);
+  };
+
+  return (
+    <div className="exceptions-page">
+      <NotificationComponent />
+      <div className="exceptions-page__container">
+        <ExceptionForm
+          api={api}
+          triggerNotification={triggerNotification}
+          refreshExceptions={refreshExceptions}
+        />
+        <div className="exceptions-page__content">
+          {activeTab !== 'all' && (
+            <ExceptionCalendar
+              exceptions={exceptions}
+              onDateClick={handleDateClick}
+              monthOffset={calendarMonthOffset}
+              onMonthChange={handleMonthChange}
+            />
+          )}
+          <ExceptionTabs activeTab={activeTab} onTabChange={handleTabChange} />
+          <ExceptionList
+            exceptions={filteredExceptions}
+            api={api}
+            triggerNotification={triggerNotification}
+            refreshExceptions={refreshExceptions}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default withHeader(Uitzonderingen);
+
+
+
+Directory Structure for "/Users/thibaultvandesompele/Desktop/Mateza 4.0/Client/Dashboard/dashboard-general/src/Pages/Uitzonderingen":
+
+├── ExceptionCalendar.js
+├── ExceptionForm.js
+├── ExceptionItem.js
+├── ExceptionList.js
+├── ExceptionTabs.js
+├── Hooks
+│   └── useExceptionForm.js
+├── Utils
+│   └── utils.js
+├── constants.js
+├── css
+│   └── exceptions.css
+└── index.js
+
+
+List of Files:
+ExceptionCalendar.js
+ExceptionForm.js
+ExceptionItem.js
+ExceptionList.js
+ExceptionTabs.js
+Hooks/useExceptionForm.js
+Utils/utils.js
+constants.js
+index.js
+
+The exception item should contain all the relevant non-empty information. So it should also display the shift, max capacity and days of week if these are set.
+
+On top, make sure that when a week pattern is specified in daysOfWeek, that the calendar displays marks the dates on the calendar according to the pattern. For example, if we only want to include maandag and dinsdag (daysOfWeek is in Dutch), we should only show dates that are on a Monday or Tuesday.
+
+When nothing is specified in days of week we can mark all the dates in the range.
+
+Print the code in full with the changes.

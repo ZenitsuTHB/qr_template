@@ -1,0 +1,40 @@
+/* ./css/shiftSelector.css */
+
+.calendar-page .shift-selector-calendar-map .shift-selector {
+	position: relative;
+	display: inline-block;
+	margin-right: 10px; /* Added margin to separate from heatmap button */
+  }
+  
+  .calendar-page .shift-selector-calendar-map .shift-button {
+	display: flex;
+	align-items: center;
+  }
+  
+  .calendar-page .shift-selector-calendar-map .shift-button-icon {
+	margin-right: 5px;
+  }
+  
+  .calendar-page .shift-selector-calendar-map .shift-options-container {
+	position: absolute;
+	top: 50px;
+	right: 0;
+	background-color: #ffffff;
+	border: 1px solid #ccc;
+	border-radius: 8px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	z-index: 1000;
+	width: 150px;
+	padding: 10px 0;
+  }
+  
+  .calendar-page .shift-selector-calendar-map .shift-option {
+	padding: 10px 20px;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+  }
+  
+  .calendar-page .shift-selector-calendar-map .shift-option:hover {
+	background-color: #f1f1f1;
+  }
+  

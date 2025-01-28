@@ -1,0 +1,44 @@
+/* src/components/FormSettings/css/alignmentSelector.css */
+
+.form-settings-page .alignment-selector {
+	margin-bottom: 20px;
+  }
+  
+  .form-settings-page .alignment-selector label {
+	display: block;
+	font-weight: 500;
+  }
+  
+  .form-settings-page .alignment-options {
+	display: flex;
+	width: 100%;
+  }
+  
+  .form-settings-page .alignment-option {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 20px;
+	margin: 5px;
+	border: 2px solid #ccc;
+	background-color: white;
+	border-radius: 5px;
+	cursor: pointer;
+	transition: border-color 0.3s;
+	text-align: center;
+  }
+  
+  .form-settings-page .alignment-option.selected {
+	border-color: var(--color-blue);
+  }
+  
+  .form-settings-page .icon-container {
+	margin-bottom: 10px;
+  }
+  
+  .form-settings-page .option-label {
+	font-size: 14px;
+  }
+  

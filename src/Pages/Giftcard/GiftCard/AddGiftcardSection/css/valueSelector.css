@@ -1,0 +1,61 @@
+.gift-card-page .value-selector {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+  }
+  
+  .gift-card-page .predefined-values {
+	display: flex;
+	gap: 10px;
+  }
+  
+  .gift-card-page .predefined-value-button {
+	flex: 1;
+	padding: 12px;
+	border: 1px solid #ccc;
+	border-radius: var(--border-radius);
+	background-color: var(--color-white);
+	cursor: pointer;
+	font-size: 1rem;
+	transition: background-color 0.3s ease;
+  }
+  
+  .gift-card-page .predefined-value-button.active,
+  .gift-card-page .predefined-value-button:hover {
+	background-color: var(--color-blue);
+	color: var(--color-white);
+  }
+  
+  .gift-card-page .slider-container {
+	display: flex;
+	align-items: center;
+	gap: 15px;
+  }
+  
+  .gift-card-page .slider {
+	flex: 1;
+	-webkit-appearance: none;
+	height: 5px;
+	background: #ddd;
+	border-radius: 5px;
+	outline: none;
+  }
+  
+  .gift-card-page .slider::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 20px;
+	height: 20px;
+	background: var(--color-blue);
+	cursor: pointer;
+	border-radius: 50%;
+  }
+  
+  .gift-card-page .value-input {
+	width: 80px;
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: var(--border-radius);
+	font-size: 1rem;
+  }
+  

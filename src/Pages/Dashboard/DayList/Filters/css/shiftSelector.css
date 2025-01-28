@@ -1,0 +1,30 @@
+
+  .reservations-page .shift-button {
+	position: absolute;
+	top: -30px;
+	right: 10px;
+  }
+
+  .reservations-page .shift-options-container {
+	position: absolute;
+	top: 20px;
+	right: 10px;
+	background-color: #ffffff;
+	border: 1px solid #ccc;
+	border-radius: 8px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	z-index: 1000;
+	width: 150px;
+	padding: 10px 0;
+  }
+  
+  .reservations-page .shift-option {
+	padding: 10px 20px;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+  }
+  
+  .reservations-page .shift-option:hover {
+	background-color: #f1f1f1;
+  }
+  

@@ -1,0 +1,105 @@
+/* src/components/GiftCard/css/addGiftCardSection.css */
+
+.gift-card-page .add-gift-card-section {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+  }
+  
+  .gift-card-page .add-gift-card-section__title {
+	margin-bottom: 20px;
+  }
+  
+  .gift-card-page .add-gift-card-section__form {
+	display: flex;
+	flex-direction: column;
+	gap: 15px; /* Reduced gap between inputs */
+  }
+  
+  .gift-card-page .form-group {
+	display: flex;
+	flex-direction: column;
+  }
+  
+  .gift-card-page .name-fields {
+	display: flex;
+	flex-wrap: nowrap;
+	flex-direction: row;
+	gap: 10px;
+  }
+  
+  .gift-card-page .name-fields .input-container {
+	flex: 1;
+	width: 40%;
+  }
+  
+  .gift-card-page .input-container {
+	position: relative;
+  }
+  
+  .gift-card-page .input-icon {
+	position: absolute;
+	top: 50%;
+	left: 10px;
+	transform: translateY(-50%);
+	color: var(--color-gray);
+	pointer-events: none;
+  }
+  
+  .gift-card-page .input-container input,
+  .gift-card-page .input-container select {
+	width: 100%;
+	padding: 10px 10px 10px 35px;
+	border: 1px solid #ccc;
+	border-radius: var(--border-radius);
+	font-size: 1rem;
+	transition: border-color 0.3s ease;
+  }
+
+  .gift-card-page #design {
+	height: 46px;
+  }
+  
+  .gift-card-page .input-container input:focus,
+  .gift-card-page .input-container select:focus {
+	border-color: var(--color-blue);
+	outline: none;
+  }
+  
+  .gift-card-page .input-container select {
+	appearance: none;
+	background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3E%3Cpath fill='%236c757d' d='M2 0L0 2h4L2 0zM2 5L0 3h4l-2 2z'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: right 10px center;
+	background-size: 8px 10px;
+	cursor: pointer;
+  }
+  
+  .gift-card-page .form-error {
+	color: var(--color-red);
+	font-size: 0.9rem;
+	margin-top: 5px;
+	display: flex;
+	align-items: center;
+	gap: 5px;
+  }
+  
+  .gift-card-page .form-success {
+	color: var(--color-green);
+	font-size: 0.9rem;
+	margin-top: 5px;
+	display: flex;
+	align-items: center;
+	gap: 5px;
+  }
+
+  @media (max-width: 768px) {
+	.gift-card-page .name-fields {
+	  flex-direction: column;
+	}
+  
+	.gift-card-page .add-gift-card-section__form {
+	  gap: 10px;
+	}
+  }
+  

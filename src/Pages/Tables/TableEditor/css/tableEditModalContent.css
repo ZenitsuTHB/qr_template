@@ -1,0 +1,136 @@
+/* css/tableEditModalContent.css */
+
+.table-edit-modal-content {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+  }
+  
+  .table-edit-modal-content h2 {
+	margin-top: 0;
+	margin-bottom: 20px;
+	font-size: 1.5rem;
+	color: #333;
+  }
+  
+  .table-edit-modal-content .settings-form {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+	width: 100%;
+  }
+  
+  .table-edit-modal-content .form-group {
+	display: flex;
+	flex-direction: column;
+  }
+  
+  .table-edit-modal-content label {
+	text-align: left;
+	margin-bottom: 5px;
+	font-weight: 500;
+	color: #555;
+  }
+  
+  .table-edit-modal-content .input-container {
+	position: relative;
+	width: 100%;
+  }
+  
+  .table-edit-modal-content .input-container input,
+  .table-edit-modal-content .input-container select {
+	width: 100%;
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	font-size: 1rem;
+	transition: border-color 0.3s ease;
+  }
+  
+  .table-edit-modal-content .input-container input:focus,
+  .table-edit-modal-content .input-container select:focus {
+	border-color: #0056b3;
+	outline: none;
+  }
+  
+  .table-edit-modal-content .settings-button {
+	padding: 12px;
+	background-color: var(--color-blue);
+	color: #fff;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 1.1rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	transition: background-color 0.3s ease;
+	width: 100%;
+  }
+  
+  .table-edit-modal-content .settings-button:hover {
+	background-color: #0056b3;
+  }
+  
+  /* Tooltip styles */
+  .table-edit-modal-content .label-with-tooltip {
+	display: flex;
+	align-items: center;
+  }
+  
+  .table-edit-modal-content .label-with-tooltip label {
+	margin-right: 5px;
+  }
+  
+  .table-edit-modal-content .button-with-tooltip {
+	position: relative;
+	display: inline-block;
+  }
+  
+  .table-edit-modal-content .button-with-tooltip .tooltip {
+	display: none; /* Initially hidden */
+	position: absolute;
+	bottom: 125%; /* Position above the button */
+	left: 50%;
+	transform: translateX(-50%);
+	width: 400px; /* Set fixed width */
+	background-color: black;
+	color: white;
+	padding: 10px 15px; /* Increased padding for better spacing */
+	border-radius: 4px;
+	white-space: normal; /* Allow text to wrap */
+	font-size: 14px;
+	z-index: 1000;
+	opacity: 0;
+	transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+  }
+  
+  .table-edit-modal-content .button-with-tooltip .tooltip::before {
+	content: '';
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	transform: translateX(-50%);
+	border-width: 5px;
+	border-style: solid;
+	border-color: black transparent transparent transparent;
+  }
+  
+  .table-edit-modal-content .button-with-tooltip:hover .tooltip {
+	display: block;
+	opacity: 1;
+	transform: translateX(-50%) translateY(-5px);
+  }
+  
+  .table-edit-modal-content .button-with-tooltip svg {
+	cursor: pointer;
+	color: #555;
+	font-size: 16px;
+  }
+  
+  .table-edit-modal-content .button-with-tooltip svg:hover {
+	color: #000;
+  }
+  

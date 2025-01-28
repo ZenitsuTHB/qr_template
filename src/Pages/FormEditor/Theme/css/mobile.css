@@ -1,0 +1,19 @@
+@media (max-width: 900px) {
+	.theme-page .theme-grid {
+	  flex-direction: column;
+	  align-items: center;
+	}
+  }
+
+  @media (max-width: 900px) {
+	.theme-page .add-theme-square {
+	  width: 100%;
+	}
+  }
+  
+  @media (max-width: 900px) {
+	.theme-page .theme-square {
+	  width: 100%;
+	}
+  }
+  

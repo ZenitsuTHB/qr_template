@@ -1,0 +1,31 @@
+/* ToggleAccordion.css */
+
+  .item-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	cursor: pointer;
+  }
+  
+  .item-label {
+	display: flex;
+	align-items: center;
+  }
+  
+  .item-label.disabled {
+	color: #ccc; /* Style for disabled state */
+  }
+  
+  .arrow-icon {
+	margin-right: 8px;
+	transition: transform 0.3s;
+  }
+  
+  .arrow-icon.expanded {
+	transform: rotate(180deg); /* Rotate icon when expanded */
+  }
+  
+  .item-content {
+	overflow: hidden;
+  }
+  

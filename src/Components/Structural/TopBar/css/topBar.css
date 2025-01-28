@@ -1,0 +1,353 @@
+/* topBar.css */
+
+.top-bar-component .top-bar {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 60px;
+	display: flex;
+	align-items: center;
+	padding: 0 20px;
+	background-color: var(--color-bg);
+	z-index: 1000;
+  }
+  
+  .top-bar-component .top-bar-left,
+  .top-bar-component .top-bar-middle,
+  .top-bar-component .top-bar-right {
+	display: flex;
+	align-items: center;
+  }
+  
+  .top-bar-component .top-bar-left {
+	flex: 1;
+  }
+  
+  .top-bar-component .top-bar-middle {
+	flex: 2;
+	justify-content: center;
+  }
+  
+  .top-bar-component .top-bar-right {
+	flex: 1;
+	justify-content: flex-end;
+  }
+  
+  .top-bar-component .top-bar-title {
+	font-size: 18px;
+	font-weight: 500;
+	position: relative;
+	transition: color 0.3s ease;
+	cursor: pointer;
+	display: inline-block;
+	background: none;
+  }
+  
+  .top-bar-component .icon-button {
+	background: none;
+	border: none;
+	padding: 8px;
+	cursor: pointer;
+	margin-left: 10px;
+	color: var(--color-accent);
+	transition: color 0.3s ease;
+  }
+  
+  .top-bar-component .icon-button:hover {
+	color: #000000;
+  }
+  
+  .top-bar-component .icon-button:focus {
+	outline: none;
+	color: #000000;
+  }
+  
+  .top-bar-component .nine-dots-wrapper {
+	padding: 4px;
+	border-radius: 4px;
+	margin-left: 4.5px;
+	transition: background-color 0.3s ease;
+  }
+  
+  .top-bar-component .nine-dots {
+	display: flex;
+	flex-wrap: wrap;
+	width: 21px;
+	height: 21px;
+	cursor: pointer;
+	position: relative;
+  }
+  
+  .top-bar-component .nine-dots .dot {
+	width: 5px;
+	height: 5px;
+	margin: 1px;
+	border-radius: 50%;
+	background-color: var(--color-accent);;
+	transition: background-color 0.3s ease;
+  }
+  
+  .top-bar-component .nine-dots-wrapper:hover .dot {
+	background-color: #000000;
+  }
+  
+  .top-bar-component .top-bar-title:hover {
+	color: transparent;
+	background: linear-gradient(270deg, 
+	  red, 
+	  orange, 
+	  yellow, 
+	  green, 
+	  blue, 
+	  indigo, 
+	  violet, 
+	  red
+	);
+	background-size: 1400% 1400%;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	animation: rainbowAnimation 5s ease infinite;
+  }
+  
+  .top-bar-component .top-bar-title {
+	display: inline-block;
+	background: none;
+	-webkit-background-clip: none;
+	-webkit-text-fill-color: var(--color-accent-main);
+	color: var(--color-accent-main);
+  }
+
+
+.top-bar-component .title-image {
+	width: 30px;
+	margin-left: 5px;
+	margin-top: 3px;
+  }
+  
+  .top-bar-component .title-image:hover {
+	color: #000000;
+  }
+
+
+.top-bar-component .icon-button-container {
+	position: relative;
+  }
+  
+  .top-bar-component .logout-menu {
+	position: absolute;
+	top: 100%;
+	right: 0;
+	background-color: #ffffff;
+	border-radius: 4px;
+	padding: 10px;
+	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+	z-index: var(--z-index-nav-top);
+  }
+  
+  .top-bar-component .logout-menu-item {
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+  }
+  
+  .top-bar-component .logout-menu-item .logout-icon {
+	color: red;
+	margin-right: 8px;
+  }
+  
+  .top-bar-component .logout-menu-item span {
+	color: #000;
+  }
+  
+
+  /* accountMenu.css */
+
+  .top-bar-component .account-button-wrapper {
+	position: relative;
+  }
+  
+  .top-bar-component .account-menu {
+	position: absolute;
+	top: 60px; /* Adjust based on top bar height */
+	right: 0;
+	background-color: #ffffff;
+	border: 1px solid #e0e0e0;
+	border-radius: 8px;
+	padding: 10px 15px;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	z-index: 1000;
+	width: 150px;
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+  }
+  
+  .top-bar-component .account-menu:hover {
+	background-color: #f9f9f9;
+  }
+  
+  .top-bar-component .logout-button {
+	display: flex;
+	align-items: center;
+	background: none;
+	border: none;
+	width: 100%;
+	cursor: pointer;
+	padding: 5px 0;
+  }
+  
+  .top-bar-component .logout-button:focus {
+	outline: none;
+  }
+  
+  .top-bar-component .logout-icon {
+	color: red;
+	margin-right: 10px;
+	font-size: 18px;
+  }
+  
+  .top-bar-component .logout-text {
+	color: #000000;
+	font-size: 16px;
+  }
+  
+  /* Adjust positioning for mobile if needed */
+  @media (max-width: 768px) {
+	.top-bar-component .account-menu {
+	  top: 50px; /* Adjust based on mobile top bar height */
+	  right: 10px;
+	  width: 120px;
+	}
+  
+	.top-bar-component .logout-text {
+	  font-size: 14px;
+	}
+  }/* topBar.css */
+
+
+/* Existing styles remain above */
+
+/* User box on the right side */
+.top-bar-component .user-box {
+	display: flex;
+	align-items: center;
+	border-radius: 20px; /* Rounded corners */
+	padding: 5px 10px;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+  }
+  
+  .top-bar-component .user-icon {
+	color: var(--color-accent-main);
+	margin-right: 8px;
+	font-size: 16px;
+  }
+  
+  .top-bar-component .user-name {
+	color: #000000;
+	font-weight: 500;
+	margin-right: 8px;
+  }
+  
+  .top-bar-component .user-chevron {
+	color: #000000;
+	font-size: 14px;
+  }
+  
+  /* Adjust if sidebar is expanded/collapsed */
+  .app-component:not(.sidebar-hidden).sidebar-expanded .top-bar-component .top-bar {
+	left: 200px;
+	width: calc(100% - 200px);
+	transition: left 0.3s ease, width 0.3s ease;
+  }
+  
+  .app-component:not(.sidebar-hidden):not(.sidebar-expanded) .top-bar-component .top-bar {
+	left: 60px;
+	width: calc(100% - 60px);
+	transition: left 0.3s ease, width 0.3s ease;
+  }
+  
+  .app-component.sidebar-hidden .top-bar-component .top-bar {
+	left: 0;
+	width: 100%;
+	transition: left 0.3s ease, width 0.3s ease;
+  }
+  
+
+  /* topBar.css */
+
+  .profile-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(5px);
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Ensure on top of everything else */
+    animation: fadeIn 0.3s ease forwards;
+    overflow: hidden; /* The overlay itself shouldn't scroll, only the modal content should. */
+}
+
+.profile-modal-content {
+    position: relative;
+    background: #ffffff;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 600px;
+    padding: 20px;
+    animation: modalScaleUp 0.3s ease forwards;
+    opacity: 0;
+    transform: scale(0.8);
+
+    /* New additions for scrolling within the modal */
+    max-height: 90vh; /* The modal will not exceed 90% of the viewport height */
+    overflow-y: auto; /* Internally scroll if content is taller than 90vh */
+}
+
+.profile-modal-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    cursor: pointer;
+    background: #eee;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.profile-modal-close:hover {
+    background: #ccc;
+    color: #000;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+@keyframes modalScaleUp {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+
+
+

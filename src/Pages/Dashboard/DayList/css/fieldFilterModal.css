@@ -1,0 +1,40 @@
+/* fieldFilterModal.css */
+
+.field-filter-modal {
+	padding: 20px;
+  }
+  
+  .field-filter-modal h2 {
+	margin-bottom: 20px;
+  }
+  
+  .field-filter-modal .field-options {
+	display: grid;
+	grid-template-columns: 50% 50%;
+	gap: 10px;
+  }
+  
+  .field-filter-modal .field-option {
+	display: flex;
+	align-items: center;
+  }
+  
+  .field-filter-modal .field-option input {
+	margin-right: 10px;
+  }
+  
+  .field-filter-modal .modal-buttons {
+	margin-top: 20px;
+	display: flex;
+	justify-content: flex-end;
+  }
+  
+  .field-filter-modal .confirm-button {
+	background-color: var(--color-blue);
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	border-radius: 5px;
+	cursor: pointer;
+  }
+  

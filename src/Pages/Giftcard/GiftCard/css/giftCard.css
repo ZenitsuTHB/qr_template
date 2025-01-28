@@ -1,0 +1,23 @@
+/* src/components/GiftCard/css/giftCard.css */
+
+.gift-card-page {
+	display: grid;
+	grid-template-rows: auto auto;
+	grid-gap: 20px;
+	margin-top: 30px;
+  }
+  
+  .gift-card-page .gift-card-page__top-row,
+  .gift-card-page .gift-card-page__bottom-row {
+	display: grid;
+	grid-gap: 20px;
+  }
+  
+  .gift-card-page .gift-card-page__top-row {
+	grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .gift-card-page .gift-card-page__bottom-row {
+	grid-template-columns: 1fr;
+  }
+  

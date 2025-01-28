@@ -1,0 +1,62 @@
+/* ./css/reservationDetailsModal.css */
+
+.calendar-page .reservation-modal-content h2 {
+	text-align: center;
+	margin: 20px 0;
+  }
+  
+  .calendar-page .reservation-table {
+	margin-top: 20px;
+  }
+  
+  .calendar-page .reservation-row {
+	border-bottom: 1px solid #ccc;
+	padding: 10px 0;
+	font-size: 15px; /* Increased font size by 1px */
+  }
+  
+  .calendar-page .reservation-main-info {
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+	margin-bottom: 10px; /* Increased margin between items */
+  }
+  
+  .calendar-page .reservation-main-info .arrow-icon {
+	margin-right: 10px;
+	transition: transform 0.3s;
+  }
+  
+  .calendar-page .reservation-main-info .arrow-icon.expanded {
+	transform: rotate(180deg);
+  }
+  
+  .calendar-page .reservation-details {
+	padding-left: 30px;
+	overflow: hidden;
+  }
+  
+  .calendar-page .reservation-details > div {
+	margin-bottom: 5px;
+  }
+  
+  .calendar-page .reservation-buttons {
+	display: flex;
+	gap: 10px;
+	margin-top: 10px;
+  }
+  
+  .calendar-page .reservation-buttons .standard-button {
+	font-size: 12px;
+  }
+  
+  .calendar-page .reservation-buttons .standard-button.red {
+	background-color: var(--color-red);
+	color: #fff;
+  }
+  
+  .calendar-page .reservation-buttons .standard-button.blue {
+	background-color: var(--color-blue);
+	color: #fff;
+  }
+  

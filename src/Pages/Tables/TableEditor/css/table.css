@@ -1,0 +1,99 @@
+/* css/table.css */
+
+.table-plan-component .table-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80px;
+}
+
+.table-plan-component .table {
+  background-color: #f5f5dc;
+  border: 2px solid #d2b48c;
+  border-radius: 8px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.table-plan-component .chairs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+.table-plan-component .top-chairs {
+  top: 0;
+  transform: translate(-50%, 150%);
+}
+
+.table-plan-component .bottom-chairs {
+  bottom: 0;
+  transform: translate(-50%, -150%);
+}
+
+.table-plan-component .chair {
+  width: 20px;
+  height: 20px;
+  background-color: #f5f5dc;
+  border: 2px solid #d2b48c;
+  border-radius: 50%;
+}
+
+/* **Styles for the table number** */
+.table-plan-component .table-number {
+  position: absolute;
+  bottom: 5px;
+  right: 5px; /* Changed from left to right */
+  background-color: rgba(255, 255, 255, 0.7);
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-size: 12px;
+  color: #333;
+  pointer-events: none; /* Ensure the number doesn't interfere with dragging */
+  transition: transform 0.2s;
+}
+
+/* **Styles for action buttons** */
+.table-plan-component .action-buttons { 
+  position: absolute;
+  top: -20px; /* Position above the table */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  opacity: 0; /* Hidden by default */
+  pointer-events: none; /* Prevent buttons from blocking table interactions */
+}
+
+.table-plan-component .table-container:hover .action-buttons {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.table-plan-component .action-buttons .action-button {
+  width: 35px; /* Slightly larger */
+  height: 35px;
+  background-color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  opacity: 1; /* Ensure buttons are fully opaque */
+  transform: scale(1); /* No scaling */
+  /* Removed animation properties */
+}
+
+.table-plan-component .action-buttons .action-button:hover {
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}

@@ -1,0 +1,96 @@
+.top-bar-component .nine-dots {
+	display: flex;
+	flex-wrap: wrap;
+	width: 24px;
+	height: 24px;
+	margin-right: 10px;
+	cursor: pointer;
+  }
+  
+  .top-bar-component .nine-dots .dot {
+	width: 6px;
+	height: 6px;
+	margin: 1px;
+	border-radius: 50%;
+	background-color: #333;
+	display: none;
+  }
+  
+  .top-bar-component .top-bar-left.active .nine-dots {
+	background-color: #f0f0f0; 
+	padding: 6px;
+	border-radius: 5px;
+  }
+    
+  .top-bar-component .apps-menu {
+	position: fixed;
+	top: 80px;
+	left: 0;
+	width: 400px;
+	height: 230px;
+	background-color: rgba(255, 255, 255, 0.95);
+	padding: 16px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+	border-radius: 8px;
+	z-index: var(--z-index-nav-top);
+	overflow-y: auto;
+	backdrop-filter: blur(10px);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+  }
+  
+  .top-bar-component .apps-menu-title {
+	margin-bottom: 16px;
+	font-size: 16px;
+	font-weight: 600;
+	text-align: center;
+  }
+  
+  .top-bar-component .apps-flex-container {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	width: 100%;
+  }
+  
+  .top-bar-component .app-item {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-decoration: none;
+	color: gray;
+	padding: 8px;
+	transition: background-color 0.3s ease;
+	width: 120px;
+	height: 80px;
+  }
+  
+  .top-bar-component .app-item:hover {
+	background-color: rgb(243, 243, 243);
+  }
+  
+  .top-bar-component .app-icon {
+	width: 40px;
+	height: 40px;
+	object-fit: cover;
+  }
+  
+  .top-bar-component .app-name {
+	width: 100%;
+	margin-top: 4px;
+	font-size: 12px;
+	color: #555;
+	text-align: center;
+	width: 200%;
+  }
+  
+  .top-bar-component .app-item.disabled {
+	pointer-events: none;
+  }
+  
+  .top-bar-component .app-item.disabled .app-name,
+  .app-item.disabled img {
+	opacity: 0.5;
+  }
+  

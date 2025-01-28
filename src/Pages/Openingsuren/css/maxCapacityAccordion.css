@@ -1,0 +1,68 @@
+/* src/components/css/maxCapacityAccordion.css */
+
+.schedule-page-component .max-capacity-accordion {
+	margin-top: 20px;
+	width: 100%;
+  }
+  
+  .schedule-page-component .item-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	cursor: pointer;
+	padding: 10px;
+	background-color: #f5f5f5; /* Adjust as needed */
+	border-radius: 5px;
+	transition: background-color 0.3s ease;
+  }
+  
+  .schedule-page-component .item-header:hover {
+	background-color: #e0e0e0;
+  }
+  
+  .schedule-page-component .item-label {
+	display: flex;
+	align-items: center;
+	font-size: 16px;
+  }
+  
+  .schedule-page-component .item-label.disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+  }
+  
+  .schedule-page-component .arrow-icon {
+	margin-right: 8px;
+	transition: transform 0.3s ease;
+  }
+  
+  .schedule-page-component .arrow-icon.expanded {
+	transform: rotate(180deg);
+  }
+  
+  
+  .schedule-page-component .item-content {
+	margin-top: 10px;
+	padding: 10px;
+	background-color: #ffffff; /* White background */
+	border: 1px solid #ddd;
+	border-radius: 5px;
+  }
+  
+  .schedule-page-component .item-content label {
+	display: block;
+	margin-bottom: 5px;
+  }
+  
+  .schedule-page-component .item-content input {
+	width: 100%;
+	padding: 8px;
+	box-sizing: border-box;
+
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	font-size: 1rem;
+	transition: border-color 0.3s ease;
+  }
+  

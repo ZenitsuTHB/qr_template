@@ -1,0 +1,15 @@
+
+.form-editing-page .editor-container {
+	display: flex;
+	height: 100vh;
+	width: 100%;
+	margin-top: 30px;
+  }
+  
+  .form-editing-page .themes-button {
+	position: absolute;
+	top: 120px;
+	right: 50px;
+	transition: transform 0.3s ease;
+}
+

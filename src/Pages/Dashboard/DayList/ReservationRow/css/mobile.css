@@ -1,0 +1,7 @@
+@media (max-width: 900px) {
+	.reservations-page .edit-button,
+	.reservations-page .delete-button {
+	  width: 100%;
+	  justify-content: center;
+	}
+  }

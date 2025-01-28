@@ -1,0 +1,176 @@
+/* datePicker.css */
+
+.reservations-page .date-picker-component {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+  }
+  
+  .reservations-page .date-picker-component .selected-date-container {
+	display: flex;
+	align-items: center;
+	position: relative;
+  }
+
+  /* src/Components/ReservationsList/Filters/css/datePicker.css */
+
+  .reservations-page .date-picker-component .total-guests-container {
+	border: 1px solid #b0b0b0;
+	border-radius: 25px; /* 50% rounded corners */
+	padding: 4px 12px; /* Small padding */
+	display: block;
+	margin-left: 10px;
+	font-size: 0.875rem; /* Small font size */
+	text-align: center;
+  }
+  
+  
+  .reservations-page .date-picker-component .nav-button {
+	background: none;
+	border: none;
+	cursor: pointer;
+	padding: 6px;
+	border-radius: 4px;
+	transition: background-color 0.3s ease;
+	color: #000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+  }
+  
+  .reservations-page .date-picker-component .nav-button:hover {
+	background-color: #e0e0e0;
+	color: var(--color-blue);
+  }
+  
+  .reservations-page .date-picker-component .selected-date {
+	text-align: center;
+	margin: 0 10px;
+	font-size: 1.5em;
+	color: #333;
+	display: flex;
+	align-items: center;
+	position: relative;
+  }
+  
+  .reservations-page .date-picker-component .print-icon {
+	margin-left: 8px;
+	color: lightgray;
+	opacity: 0;
+	font-size: 20px;
+	transition: all 0.3s ease;
+	cursor: pointer;
+  }
+  
+  .reservations-page .date-picker-component .selected-date:hover .print-icon,
+  .reservations-page .date-picker-component .print-icon:hover {
+	opacity: 1;
+  }
+  
+  .reservations-page .date-picker-component .print-icon:hover {
+	color: gray; 
+  }
+  
+  .reservations-page .date-picker-component .date-button {
+	position: absolute;
+	top: -80px;
+	right: 10px;
+  }
+  
+  .reservations-page .date-picker-component .date-picker-popup {
+	position: absolute;
+	top: -30px;
+	right: 10px;
+	z-index: 100000;
+	background-color: #fff;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	padding: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Tooltip styles */
+  .reservations-page .date-picker-component .button-with-tooltip {
+	position: relative;
+	display: inline-block;
+	margin: 0 5px;
+  }
+  
+  .reservations-page .date-picker-component .button-with-tooltip .tooltip {
+	display: none;
+	position: absolute;
+	bottom: 125%;
+	left: 50%;
+	transform: translateX(-50%);
+	background-color: black;
+	color: white;
+	padding: 6px 8px;
+	border-radius: 4px;
+	white-space: nowrap;
+	font-size: 14px;
+	z-index: 1000;
+	opacity: 0;
+	transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+  }
+  
+  .reservations-page .date-picker-component .button-with-tooltip .tooltip::before {
+	content: '';
+	position: absolute;
+	top: 100%;
+	left: 50%;
+	transform: translateX(-50%);
+	border-width: 5px;
+	border-style: solid;
+	border-color: black transparent transparent transparent;
+  }
+  
+  .reservations-page .date-picker-component .button-with-tooltip:hover .tooltip {
+	display: block;
+	opacity: 1;
+	transform: translateX(-50%) translateY(-5px);
+  }
+  
+  /* Adjust margins to prevent overlap */
+  .reservations-page .date-picker-component .selected-date {
+	margin: 0 40px; /* Adjust as needed based on chevron sizes */
+  }
+  
+  @media (max-width: 1200px) {
+	.reservations-page .date-picker-component .total-guests-container {
+		display: none;
+	}
+  }
+
+  @media (max-width: 1100px) {
+	.reservations-page .date-picker-component .nav-button {
+		display: none;
+	}
+  }
+
+  @media (max-width: 900px) {
+	.reservations-page .date-picker-component .selected-date-container {
+		margin-bottom: 0px;
+	}
+}
+
+.reservations-page .date-picker-component {
+	margin-bottom: 40px;
+}
+
+@media (max-width: 900px) {
+	.reservations-page .date-picker-component {
+		margin-top: 100px;
+	}
+
+	.reservations-page .date-picker-component .selected-date {
+		text-align: center;
+		font-size: 23px;
+		margin-top: 12px;
+	}
+
+	.reservations-page .date-picker-component {
+		margin-bottom: 0px;
+	}
+}
+

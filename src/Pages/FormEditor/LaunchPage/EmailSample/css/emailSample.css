@@ -1,0 +1,114 @@
+
+  .launch-page .email-header {
+	display: flex;
+	align-items: center;
+	margin-bottom: 15px;
+  }
+  
+  .launch-page .email-icon {
+	font-size: 24px;
+	color: var(--color-blue);
+	margin-right: 10px;
+  }
+  
+  .launch-page .email-title {
+	font-size: 20px;
+	color: var(--color-black);
+	margin: 0;
+  }
+  
+  .launch-page .email-intro {
+	margin-bottom: 20px;
+	font-size: 16px;
+	color: var(--color-black);
+  }
+  
+  .launch-page .email-sample {
+	background-color: #f8f9fa;
+	padding: 20px;
+	border: 1px solid #ced4da;
+	border-radius: 4px;
+	margin-bottom: 20px;
+  }
+  
+  .launch-page .email-sample p {
+	margin-bottom: 15px;
+	font-size: 16px;
+	color: var(--color-black);
+  }
+  
+  .launch-page .email-sample a {
+	color: var(--color-blue);
+	text-decoration: none;
+  }
+  
+  .launch-page .email-sample a:hover {
+	text-decoration: underline;
+  }
+  
+  .launch-page .email-button {
+	display: inline-block;
+	padding: 12px 20px;
+	background-color: #28a745;
+	color: #ffffff;
+	border-radius: 4px;
+	text-decoration: none;
+	font-size: 16px;
+	transition: background-color 0.3s ease;
+  }
+  
+  .launch-page .email-button:hover {
+	background-color: #218838;
+  }
+  
+  .launch-page .email-section {
+	margin-bottom: 20px;
+  }
+  
+  .launch-page .email-section p {
+	margin-bottom: 15px;
+	font-size: 16px;
+	color: var(--color-black);
+  }
+  
+  .launch-page .email-button {
+	display: inline-block;
+	padding: 12px 20px;
+	background-color: var(--color-blue);
+	color: #ffffff;
+	border-radius: 4px;
+	text-decoration: none;
+	font-size: 16px;
+	margin-bottom: 20px;
+	transition: background-color 0.3s ease;
+  }
+  
+  .launch-page .email-button:hover {
+	background-color: #0056b3;
+  }
+  
+  .launch-page .email-sample-text {
+	font-weight: bold;
+	margin-bottom: 10px;
+  }
+  
+  .launch-page .email-sample {
+	background-color: #f8f9fa;
+	padding: 15px;
+	border: 1px solid #ced4da;
+	border-radius: 4px;
+  }
+  
+  .launch-page .email-sample p {
+	margin-bottom: 10px;
+  }
+  
+  .launch-page .email-sample a {
+	color: var(--color-blue);
+	text-decoration: none;
+  }
+  
+  .launch-page .email-sample a:hover {
+	text-decoration: underline;
+  }
+  

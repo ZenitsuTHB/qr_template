@@ -1,0 +1,78 @@
+/* reservationRow.css */
+
+.reservations-page .reservation-row {
+	display: contents;
+  }
+  
+  .reservations-page .reservation-row > div {
+	padding: 10px;
+	padding-top: 0px;
+	padding-bottom: 7px;
+	border-bottom: 1px solid lightgray;
+  }
+  
+  .reservations-page .reservation-row-mobile {
+	border: 1px solid #ccc;
+	padding: 10px;
+	margin-bottom: 10px;
+	border-radius: 8px;
+  }
+  
+  .reservations-page .reservation-item {
+	margin-bottom: 10px;
+  }
+  
+  .reservations-page .reservation-item .label {
+	font-weight: bold;
+	margin-bottom: 5px;
+  }
+  
+  .reservations-page .buttons-container {
+	display: flex;
+	justify-content: flex-start;
+	gap: 10px;
+  }
+  
+  .reservations-page .edit-button,
+  .reservations-page .delete-button {
+	display: flex;
+	align-items: center;
+	padding: 8px 16px;
+	border: none;
+	border-radius: 5px;
+	background-color: var(--color-bg);
+	color: #777;
+	cursor: pointer;
+	font-size: 14px;
+	height: 45px;
+	margin-top: 15px;
+	transition: background-color 0.3s ease;
+  }
+  
+  .reservations-page .delete-button {
+	background-color: var(--color-blue);
+	color: white;
+  }
+  
+  .reservations-page .button-icon {
+	margin-right: 8px;
+	display: flex;
+	align-items: center;
+	font-size: 14px;
+  }
+  
+  .reservations-page .reservation-row-mobile {
+	color: #292929;
+	font-size: 15px;
+  }
+  
+  .reservations-page .reservation-row-desktop {
+	font-size: 14px;
+  }
+  
+  .reservations-page .actions-cell {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+  }
+  

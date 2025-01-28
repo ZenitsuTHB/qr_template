@@ -1,0 +1,29 @@
+/* src/components/ReservationForm/css/reservationSummary.css */
+
+.new-reservation-page .reservation-sidebar-component .reservation-summary .modal-title {
+	margin-top: 0;
+	margin-bottom: 20px;
+  }
+  
+  .new-reservation-page .reservation-sidebar-component .reservation-summary .reservation-details {
+	list-style-type: none;
+	padding: 0;
+	margin: 0 0 20px 0;
+	width: 100%;
+  }
+  
+  .new-reservation-page .reservation-sidebar-component .reservation-summary .reservation-details li {
+	margin-bottom: 10px;
+	font-size: 15px;
+	align-items: left;
+	text-align: left;
+  }
+  
+  .new-reservation-page .reservation-sidebar-component .reservation-summary .reservation-details li strong {
+	font-weight: bold;
+  }
+  
+  .new-reservation-page .reservation-sidebar-component .reservation-summary {
+	align-items: left;
+  }
+  

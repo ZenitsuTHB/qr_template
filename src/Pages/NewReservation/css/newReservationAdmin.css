@@ -1,0 +1,66 @@
+/* newReservationAdmin.css */
+
+  
+.new-reservation-page .account-manage-title {
+	text-align: center;
+	margin-bottom: 30px;
+  }
+  
+  .new-reservation-page .account-manage-container {
+	max-width: 800px;
+	margin: 0 auto;
+  }
+  
+  .new-reservation-page .account-manage-form {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+  }
+  
+  .new-reservation-page .input-container {
+	position: relative;
+  }
+  
+  .new-reservation-page .input-icon {
+	position: absolute;
+	top: 50%;
+	left: 10px;
+	transform: translateY(-50%);
+	color: #6c757d;
+	pointer-events: none;
+  }
+  
+  .new-reservation-page .input-container input,
+  .new-reservation-page .input-container textarea {
+	width: 100%;
+	padding: 10px 10px 10px 35px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	font-size: 1rem;
+	transition: border-color 0.3s ease;
+  }
+  
+  .new-reservation-page .form-error {
+	color: #dc3545;
+	font-size: 0.9rem;
+	margin-top: 5px;
+	display: flex;
+	align-items: center;
+	gap: 5px;
+  }
+  
+  .new-reservation-page .account-manage__button {
+	padding: 12px;
+	background-color: var(--color-blue);
+	color: #fff;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 1.1rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	transition: background-color 0.3s ease;
+  }
+  

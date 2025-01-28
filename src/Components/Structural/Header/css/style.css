@@ -1,0 +1,7 @@
+.withHeader {
+	background-color: var(--color-bg);
+	padding-top: 50px;
+	padding-left: 50px;
+	padding-right: 50px;
+	transition: all 0.3s ease;
+  }

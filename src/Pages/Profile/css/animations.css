@@ -1,0 +1,48 @@
+@keyframes modalFadeIn {
+	from {
+	  opacity: 0;
+	}
+	to {
+	  opacity: 1;
+	}
+}
+
+@keyframes modalContentBounceIn {
+	0% {
+	  transform: scale(0.7);
+	  opacity: 0;
+	}
+	60% {
+	  transform: scale(1.05);
+	  opacity: 1;
+	}
+	100% {
+	  transform: scale(1);
+	}
+}
+
+@keyframes avatarFadeIn {
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+@keyframes fadeIn {
+	from {
+	  opacity: 0;
+	}
+	to {
+	  opacity: 1;
+	}
+  }
+  
+  @keyframes slideIn {
+	from {
+	  transform: translateY(-20px);
+	}
+	to {
+	  transform: translateY(0);
+	}
+  }
+  

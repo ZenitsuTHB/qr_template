@@ -1,0 +1,13 @@
+/* ./css/timeOfDay.css */
+
+  .calendar-page .time-of-day-box {
+	width: 100%;
+	border-radius: 5px;
+	color: #fff;
+	padding: 8px 5px;
+	margin-bottom: 5px;
+	text-align: left;
+	font-size: 13px;
+	font-weight: 500;
+  }
+  

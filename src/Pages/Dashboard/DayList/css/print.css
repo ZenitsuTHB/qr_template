@@ -1,0 +1,116 @@
+/* reservationList.css or print.css */
+
+@media print {
+	/* Hide all elements */
+	body * {
+	  visibility: hidden;
+	}
+  
+	/* Make .reservations-container and its children visible */
+	.reservations-container,
+	.reservations-container * {
+	  visibility: visible;
+	}
+  
+	/* Make .selected-date and its children visible */
+	.selected-date,
+	.selected-date * {
+	  visibility: visible;
+	}
+  
+	/* Position the .reservations-container and .selected-date */
+	.reservations-container {
+	  position: absolute;
+	  left: 0;
+	  margin-top: -120px;
+	  top: -120px;
+	  width: 100%;
+	}
+  
+	.selected-date {
+	  position: absolute;
+	  left: 0;
+	  margin-top: -120px;
+	  top: -160px;
+	  width: 100%;
+	  margin-bottom: 20px;
+	  font-size: 18pt;
+	  text-align: center;
+	}
+  
+	/* Hide interactive elements within reservations container */
+	.selected-date .print-icon {
+	  opacity: 0;
+	  display: none;
+	  visibility: hidden;
+	  width: 0;
+	  height: 0;
+	}
+  
+	/* Optional: Enhance print layout */
+	.reservations-container {
+	  font-size: 12pt;
+	  margin: 20px;
+	}
+  
+	.reservations-container table {
+	  width: 100%;
+	  border-collapse: collapse;
+	}
+  
+	.reservations-container th,
+	.reservations-container td {
+	  border: 1px solid #000;
+	  padding: 8px;
+	  text-align: left;
+	}
+  
+	/* Control page breaks */
+	.reservations-container {
+	  page-break-after: always;
+	}
+  
+	.reservations-container .reservation-row {
+	  page-break-inside: avoid;
+	}
+
+	.reservations-page .new-reservation {
+	  font-weight: normal;
+	}
+
+	.reservations-container .pagination {
+		display: none;
+	}
+
+	.reservations-container .name-link {
+		color: black
+	}
+  
+	.reservations-page .icons-container,
+	.reservations-page .ellipsis-container,
+	.reservations-page .extra-icon-container,
+	.reservations-page .tooltip-container,
+	.reservations-page .extra-tooltip {
+	  display: none !important;
+	}
+  
+	/* Show Extra Info as Full Row */
+	.reservations-page .extra-info-print {
+	  display: block !important;
+	}
+  
+	/* Ensure full width */
+	.reservations-page .extra-info-print {
+	  width: 100%;
+	  box-sizing: border-box;
+	}
+  
+	/* Ensure .new-reservation is not bold */
+	.reservations-page .new-reservation {
+	  font-weight: normal !important;
+	}
+
+	.reservations-container .buttons-container {
+		display: none !important;
+	}
+  }

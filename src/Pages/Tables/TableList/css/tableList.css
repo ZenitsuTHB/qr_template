@@ -1,0 +1,138 @@
+/* css/tableList.css */
+
+.tables-list-page {
+	padding: 20px;
+  }
+  
+  .tables-list-page h2 {
+	margin-bottom: 20px;
+	color: #333;
+  }
+  
+  .tables-list-page .tables-list,
+  .tables-list-page .table-groups-list {
+	width: 100%;
+	border-collapse: collapse;
+	margin-bottom: 30px;
+	font-size: 14px;
+  }
+  
+  .tables-list-page th,
+  .tables-list-page td {
+	border: 1px solid #ddd;
+	padding: 12px 15px;
+	text-align: left;
+  }
+  
+  .tables-list-page th {
+	background-color: #f9f9f9;
+	font-weight: bold;
+	color: #555;
+  }
+  
+  .tables-list-page tr:nth-child(even) {
+	background-color: #f9f9f9;
+  }
+  
+  .tables-list-page input[type='text'],
+  .tables-list-page input[type='number'],
+  .tables-list-page select {
+	width: 100%;
+	padding: 8px 10px;
+	box-sizing: border-box;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	font-size: 14px;
+  }
+  
+  .tables-list-page input[type='text']:focus,
+  .tables-list-page input[type='number']:focus,
+  .tables-list-page select:focus {
+	border-color: var(--color-blue);
+	outline: none;
+  }
+  
+  .tables-list-page .ellipsis-container {
+	position: relative;
+	display: inline-block;
+  }
+  
+  .tables-list-page .ellipsis-icon {
+	cursor: pointer;
+	color: #a6a6a6;
+	font-size: 16px;
+  }
+  
+  .tables-list-page .tooltip-container {
+	position: absolute;
+	top: 100%;
+	right: 0;
+	transform: translateY(10px);
+	background-color: white;
+	border: 1px solid lightgray;
+	border-radius: 5px;
+	padding: 5px 0;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+	z-index: 1000;
+  }
+  
+  .tables-list-page .tooltip-item {
+	padding: 8px 15px;
+	cursor: pointer;
+  }
+  
+  .tables-list-page .tooltip-item:hover {
+	background-color: #f0f0f0;
+  }
+  
+  .tables-list-page .tooltip-item.delete-item {
+	color: red;
+  }
+  
+  .tables-list-page .tooltip-item.delete-item:hover {
+	background-color: #ffe6e6;
+  }
+  
+  .tables-list-page .actions-column {
+	width: 100px; /* Adjust the width as needed */
+	text-align: center;
+  }
+  
+  .tables-list-page .ellipsis-column {
+	width: 40px; /* Limit the width to the icon with some margin */
+	text-align: center;
+  }
+  
+  .tables-list-page .tables-list-title {
+	font-size: 1.5rem;
+	margin-bottom: 10px;
+	color: #333;
+  }
+
+  
+  /* Responsive Styles */
+  @media (max-width: 768px) {
+	.tables-list-page th,
+	.tables-list-page td {
+	  padding: 8px 10px;
+	  font-size: 12px;
+	}
+	.tables-list-page .ellipsis-icon {
+	  font-size: 14px;
+	}
+  
+	/* Hide 'Vorm' and 'Prioriteit' columns on mobile */
+	.tables-list-page .hide-on-mobile {
+	  display: none;
+	}
+  
+	/* Adjust actions column width on mobile */
+	.tables-list-page .actions-column {
+	  width: 80px;
+	}
+  
+	.tables-list-page .ellipsis-column {
+	  width: 40px;
+	}
+  }
+  
