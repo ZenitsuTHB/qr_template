@@ -3,6 +3,6 @@ id_ed25519_github.pub
 deploy.js
 mateza-deploy
 mateza-deploy.pub
-
+.DS_Store
 node_modules
 build

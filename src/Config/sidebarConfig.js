@@ -54,7 +54,7 @@ import Mededeling from '../Pages/Mededeling/index.js';
 import Openingsuren from '../Pages/Openingsuren/index.js';
 import Uitzonderingen from '../Pages/Uitzonderingen/index.js';
 import UploadPdf from '../Pages/UploadPdf/index.js';
-
+import { FaQrcode } from 'react-icons/fa';//impot the QR code icon by Archly
 
 const routesConfig = [
   {
@@ -202,6 +202,12 @@ const routesConfig = [
     isMobile: false,
     isTab: false,
     secondaryTopBar: settingsSecondaryTopBar,
+  },
+  {
+    path: '/qr_manager',
+    label: 'QR Manager',
+    icon: FaQrcode,
+    isMenu: true,
   },
 
 ];

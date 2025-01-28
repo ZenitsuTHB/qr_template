@@ -1,27 +1,21 @@
 import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import MainApp from './Components/MainApp';
 import Login from './Pages/Login';
+import OTPLogin from './Pages/Login/OTPLogin';
 import WelcomeAnimation from './Components/Animations/index.js';
+import QRManager from './Pages/qr_manager';
+import Sidebar from './Components/Structural/Sidebar';
 import './Styles/all-styles.js';
-import OTPLogin from './Pages/Login/OTPLogin/index.js';
-
-window.baseDomain = "https://squid-app-aychi.ondigitalocean.app/";
-
-window.viewMode = 'full-screen';
-window.isProduction = false;
 
 const App = () => {
   const loginDone = localStorage.getItem('loginSuccessful') === 'true';
   const animationShown = localStorage.getItem('welcomeScreenShown') === 'true';
   const shouldShowAnimation = !animationShown && !window.isIframe;
 
-  console.log('Current document cookies:', document.cookie);
-
-  // Check if there's an OTP in the URL search params
   const urlParams = new URLSearchParams(window.location.search);
   const otp = urlParams.get('otp');
 
-  // If there's an OTP, render the OTPLogin component
   if (otp) {
     return <OTPLogin otp={otp} />;
   }
@@ -31,7 +25,21 @@ const App = () => {
   } else if (shouldShowAnimation) {
     return <WelcomeAnimation />;
   } else {
-    return <MainApp />;
+    return (
+      // Wrap the entire app in a single Router
+      <Router>
+        <div className="app-container flex">
+          <Sidebar />
+          <div className="content-container flex-grow">
+            <Routes>
+              <Route path="/" element={<MainApp />} />
+              <Route path="/qr_manager" element={<QRManager />} />
+              {/* Add other routes here */}
+            </Routes>
+          </div>
+        </div>
+      </Router>
+    );
   }
 };
 
