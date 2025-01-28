@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import MainApp from './Components/MainApp';
 import Login from './Pages/Login';
 import OTPLogin from './Pages/Login/OTPLogin';
@@ -26,19 +26,16 @@ const App = () => {
     return <WelcomeAnimation />;
   } else {
     return (
-      // Wrap the entire app in a single Router
-      <Router>
-        <div className="app-container flex">
-          <Sidebar />
-          <div className="content-container flex-grow">
-            <Routes>
-              <Route path="/" element={<MainApp />} />
-              <Route path="/qr_manager" element={<QRManager />} />
-              {/* Add other routes here */}
-            </Routes>
-          </div>
+      <div className="app-container flex">
+        <Sidebar />
+        <div className="content-container flex-grow">
+          <Routes>
+            <Route path="/" element={<MainApp />} />
+            <Route path="/qr_manager" element={<QRManager />} />
+            {/* Add other routes here */}
+          </Routes>
         </div>
-      </Router>
+      </div>
     );
   }
 };
