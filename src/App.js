@@ -1,11 +1,8 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
 import MainApp from './Components/MainApp';
 import Login from './Pages/Login';
 import OTPLogin from './Pages/Login/OTPLogin';
 import WelcomeAnimation from './Components/Animations/index.js';
-import QRManager from './Pages/qr_manager';
-import Sidebar from './Components/Structural/Sidebar';
 import './Styles/all-styles.js';
 
 const App = () => {
@@ -25,18 +22,7 @@ const App = () => {
   } else if (shouldShowAnimation) {
     return <WelcomeAnimation />;
   } else {
-    return (
-      <div className="app-container flex">
-        <Sidebar />
-        <div className="content-container flex-grow">
-          <Routes>
-            <Route path="/" element={<MainApp />} />
-            <Route path="/qr_manager" element={<QRManager />} />
-            {/* Add other routes here */}
-          </Routes>
-        </div>
-      </div>
-    );
+    return <MainApp />;
   }
 };
 
