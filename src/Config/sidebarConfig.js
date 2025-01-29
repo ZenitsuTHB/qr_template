@@ -1,60 +1,61 @@
 // src/routesConfig.js
 
 import {
-  FaPlus,
+ // FaPlus,
   FaStar,
   FaCalendarAlt,
   FaCog,
   FaFlag,
   FaShieldAlt,
   FaUser,
-  FaTable,
+  //FaTable,
   FaMailBulk,
-  FaGift,
-  FaPencilAlt,
-  FaChair,
-  FaFileDownload,
+  //FaGift,
+  //FaPencilAlt,
+  //FaChair,
+  //FaFileDownload,
   FaUtensilSpoon,
-  FaPeopleCarry,
+  //FaPeopleCarry,
   FaUserFriends,
   FaBell,
   FaLock,
   FaFilePdf,
-  FaSafari,
+  //FaSafari,
+  FaQrcode,
 } from 'react-icons/fa';
 
 import Profile from '../Pages/Profile/index.js';
 import DayList from '../Pages/Dashboard/DayList/index.js';
-import GiftCard from '../Pages/Giftcard/GiftCard'
-import GiftcardEditor from '../Pages/Giftcard/GiftcardEditor'
-import TablePlan from '../Pages/Tables/TablePlan/index.js'
-import SettingsTabsWithHeader from '../Pages/FormEditor/index.js'
-import SchedulePage from '../Pages/Openingsuren/index.js'; 
+//import GiftCard from '../Pages/Giftcard/GiftCard'
+//import GiftcardEditor from '../Pages/Giftcard/GiftcardEditor'
+//import TablePlan from '../Pages/Tables/TablePlan/index.js'
+//import SettingsTabsWithHeader from '../Pages/FormEditor/index.js'
+//import SchedulePage from '../Pages/Openingsuren/index.js'; 
 
 
 import {
   overviewSecondaryTopBar,
-  calendarSecondaryTopBar,
+  //calendarSecondaryTopBar,
   accountSecondaryTopBar,
   settingsSecondaryTopBar,
   openinghoursSecondaryTopBar,
-  giftCardSecondaryTopBar,
-  tableSecondaryTopBar
+  //giftCardSecondaryTopBar,
+  //tableSecondaryTopBar
 } from './secondaryTabConfig.js';
 import Language from '../Pages/Profile/Language/index.js';
-import NewReservationAdmin from '../Pages/NewReservation/index.js';
+//import NewReservationAdmin from '../Pages/NewReservation/index.js';
 import RootComponent from './RootComponent.js';
 import Settings from '../Pages/Settings/GeneralSettings/index.js';
 import EmailSettings from '../Pages/Settings/EmailSettings/index.js';
-import TableEditor from '../Pages/Tables/TableEditor/index.js';
-import TableList from '../Pages/Tables/TableList/index.js';
+//import TableEditor from '../Pages/Tables/TableEditor/index.js';
+//import TableList from '../Pages/Tables/TableList/index.js';
 import Menu from '../Pages/Menu/index.js';
 import Personeel from '../Pages/Personeel/index.js';
 import Mededeling from '../Pages/Mededeling/index.js';
 import Openingsuren from '../Pages/Openingsuren/index.js';
 import Uitzonderingen from '../Pages/Uitzonderingen/index.js';
 import UploadPdf from '../Pages/UploadPdf/index.js';
-import { FaQrcode } from 'react-icons/fa';//impot the QR code icon by Archly
+import QRManager from '../Pages/QrManager/qr_manager.js';
 
 const routesConfig = [
   {
@@ -204,11 +205,12 @@ const routesConfig = [
     secondaryTopBar: settingsSecondaryTopBar,
   },
   {
-    path: '/qr_manager',
-    label: 'QR Manager',
+    path: "/qr_manager",
+    label: "QR Manager",
+    element: <QRManager />,
     icon: FaQrcode,
     isMenu: true,
-  },
+  }
 
 ];
 
