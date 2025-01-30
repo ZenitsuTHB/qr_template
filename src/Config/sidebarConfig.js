@@ -73,7 +73,7 @@ const routesConfig = [
     element: <Menu title="Menu"/>, // Use RootComponent here
     label: 'Menu',
     icon: FaUtensilSpoon,
-    isMenu: true,
+    isMenu: false,
     isMobile: true,
     isTab: false,
   },
@@ -82,7 +82,7 @@ const routesConfig = [
     element: <Mededeling title="Mededeling" />,
     label: 'Mededeling',
     icon: FaBell,
-    isMenu: true,
+    isMenu: false,
     isMobile: false,
     isTab: false,
   },
@@ -101,7 +101,7 @@ const routesConfig = [
     element: <Uitzonderingen title="Uitzonderingen"/>, // Use RootComponent here
     label: 'Uitzonderingen',
     icon: FaLock,
-    isMenu: true,
+    isMenu: false,
     isMobile: true,
     isTab: false,
   },
@@ -160,7 +160,7 @@ const routesConfig = [
     element: <Personeel title="Personeel" />,
     label: 'Personeel',
     icon: FaUserFriends,
-    isMenu: true,
+    isMenu: false,
     isMobile: true,
     isTab: true,
   },
@@ -210,6 +210,9 @@ const routesConfig = [
     element: <QRManager />,
     icon: FaQrcode,
     isMenu: true,
+    isMobile: true,
+    isTab: true,
+    secondaryTopBar: overviewSecondaryTopBar,
   }
 
 ];

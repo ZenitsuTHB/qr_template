@@ -26,7 +26,6 @@ const MainApp = () => {
       {!isSidebarHidden && (
         <Sidebar onToggleExpand={setSidebarExpanded} />
       )}
-
       {/* This renders all pages, including QR Manager */}
       <ContentRouting />
     </div>

@@ -1,0 +1,27 @@
+.qr-manager-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+    transition: margin-left 0.3s ease; /* Smooth transition when sidebar expands */
+    margin-left: 60px; /* Default width of collapsed sidebar */
+  }
+  
+  .navigation-bar button {
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .qr-content {
+    margin-top: 20px;
+    font-size: 18px;
+  }
+  
+  /* When the sidebar is expanded */
+  .sidebar-component.expanded + .qr-manager-page {
+    margin-left: 200px; /* Adjust to match expanded sidebar width */
+  }
+  
