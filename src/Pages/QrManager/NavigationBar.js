@@ -5,9 +5,9 @@ const NavigationBar = ({ sections, selectedSection, onSectionClick }) => {
     <nav className="navigation-bar flex space-x-4 p-4 bg-gray-200">
       {sections.map((section) => (
         <button
-          key={section.id}
-          className={`p-2 ${selectedSection === section.id ? 'bg-blue-500 text-white' : 'bg-white'}`}
-          onClick={() => onSectionClick(section.id)}
+          key={section.path} // Use path as key
+          className={`p-2 ${selectedSection === section.path ? 'bg-blue-500 text-white' : 'bg-white'}`}
+          onClick={() => onSectionClick(section.path)} // Use path
         >
           {section.label}
         </button>

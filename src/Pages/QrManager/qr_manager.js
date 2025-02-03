@@ -1,33 +1,31 @@
-import React, { useState } from 'react';
-import useWindowWidth from './Hooks/useWindowWidth'; // Adjust path as needed
-import NavigationBar from './NavigationBar'; // If you have a navigation component
-import QRContent from './QRContent'; // Component to display dynamic content
-import { withHeader } from '../../Components/Structural/Header'; // If using a layout wrapper
+import React from 'react';
+import { Outlet } from 'react-router-dom';
+import NavigationBar from './NavigationBar';
+import { qrManagerSecondaryTopBar } from '../../Config/secondaryTabConfig.js';
+import { withHeader } from '../../Components/Structural/Header/index.js';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const QRManager = () => {
-  const windowWidth = useWindowWidth();
-  const [selectedSection, setSelectedSection] = useState('Overview');
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const isMobile = windowWidth < 900;
-
-  const sections = [
-    { id: 'Overview', title: 'Overview', label: isMobile ? 'O' : 'Overview' },
-    { id: 'Generate', title: 'Generate QR', label: isMobile ? 'G' : 'Generate' },
-    { id: 'Scan', title: 'Scan QR', label: isMobile ? 'S' : 'Scan' },
-    { id: 'History', title: 'History', label: isMobile ? 'H' : 'History' },
-  ];
+  const handleSectionClick = (path) => {
+    navigate(`/qr_manager/${path}`);
+  };
 
   return (
     <div className="qr-manager-page">
       {/* Navigation Bar */}
       <NavigationBar
-        sections={sections}
-        selectedSection={selectedSection}
-        onSectionClick={setSelectedSection}
+        sections={qrManagerSecondaryTopBar}
+        selectedSection={location.pathname.replace('/qr_manager/', '')}
+        onSectionClick={handleSectionClick}
       />
 
-      {/* Dynamic Content Based on Selection */}
-      <QRContent selectedSection={selectedSection} />
+      {/* Outlet renders child routes dynamically */}
+      <div className="qr-content">
+        <Outlet />
+      </div>
     </div>
   );
 };

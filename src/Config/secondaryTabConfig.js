@@ -1,5 +1,36 @@
 // src/config/secondaryTopBars.js
 
+/*const isMobile = window.innerWidth <= 768;
+
+export const sections = [
+
+	{ id: 'Overview', title: 'Overview', label: isMobile ? 'O' : 'Overview' },
+	{ id: 'Generate', title: 'Generate QR', label: isMobile ? 'G' : 'Generate' },
+	{ id: 'Scan', title: 'Scan QR', label: isMobile ? 'S' : 'Scan' },
+	{ id: 'History', title: 'History', label: isMobile ? 'H' : 'History' },
+];*/
+
+  
+export const qrManagerSecondaryTopBar = [
+	{
+	  label: 'Overview',
+	  path: '',
+	},
+	{
+	  label: 'Generator',
+	  path: 'generate',
+	},
+	{
+	  label: 'Generated',
+	  path: 'generated',
+	},
+	{
+	  label: 'History',
+	  path: 'history',
+	},
+  ];
+
+
 export const overviewSecondaryTopBar = [
 	{
 	  label: 'Maandoverzicht',

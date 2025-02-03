@@ -32,8 +32,10 @@ import DayList from '../Pages/Dashboard/DayList/index.js';
 //import SettingsTabsWithHeader from '../Pages/FormEditor/index.js'
 //import SchedulePage from '../Pages/Openingsuren/index.js'; 
 
+/***_______IMPORT FOR THE SECONDARY TABS CONFIG_______***/
 
 import {
+  qrManagerSecondaryTopBar,
   overviewSecondaryTopBar,
   //calendarSecondaryTopBar,
   accountSecondaryTopBar,
@@ -42,6 +44,7 @@ import {
   //giftCardSecondaryTopBar,
   //tableSecondaryTopBar
 } from './secondaryTabConfig.js';
+
 import Language from '../Pages/Profile/Language/index.js';
 //import NewReservationAdmin from '../Pages/NewReservation/index.js';
 import RootComponent from './RootComponent.js';
@@ -56,6 +59,10 @@ import Openingsuren from '../Pages/Openingsuren/index.js';
 import Uitzonderingen from '../Pages/Uitzonderingen/index.js';
 import UploadPdf from '../Pages/UploadPdf/index.js';
 import QRManager from '../Pages/QrManager/qr_manager.js';
+import Overview from '../Pages/QrManager/Overview.js';
+import Generate from '../Pages/QrManager/QRGenerator.js';
+import Generated from '../Pages/QrManager/QRGenerated.js'; 
+import History from '../Pages/QrManager/QRHistory.js';
 
 const routesConfig = [
   {
@@ -205,14 +212,20 @@ const routesConfig = [
     secondaryTopBar: settingsSecondaryTopBar,
   },
   {
-    path: "/qr_manager",
+    path: "/qr_manager/*",
     label: "QR Manager",
     element: <QRManager />,
+    children: [
+      { path: '', element: <Overview /> }, // Default page
+      { path: 'generate', element: <Generate /> },
+      { path: 'generated', element: <Generated /> },
+      { path: 'history', element: <History /> },
+    ],
     icon: FaQrcode,
     isMenu: true,
-    isMobile: true,
+    isMobile: false,
     isTab: true,
-    secondaryTopBar: overviewSecondaryTopBar,
+    secondaryTopBar: qrManagerSecondaryTopBar,
   }
 
 ];
